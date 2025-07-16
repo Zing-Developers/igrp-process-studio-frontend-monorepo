@@ -440,4 +440,3 @@ Semana 16-18: Dependente de todas as APIs
 ---
 
 Este plano de implementação garante uma abordagem centrada no utilizador e orientada por qualidade, maximizando a adoção e satisfação dos utilizadores finais.
-
