@@ -1,0 +1,23 @@
+{
+  "name": "@igrp/studio-demo",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@igrp/process-studio-frontend-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^24.1.0",
+    "rimraf": "^6.0.1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "IGRP Process Studio App"
+}

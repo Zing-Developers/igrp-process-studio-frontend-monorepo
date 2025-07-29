@@ -1,0 +1,20 @@
+{
+  "name": "@igrp/process-studio-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:demo": "pnpm --filter @igrp/studio-demo dev",
+    "build:types": "pnpm --filter @igrp/process-studio-frontend-types build",
+    "build:studio": "pnpm --filter @igrp/studio-demo build",
+    "build:all": "pnpm build:types && pnpm build:studio",
+    "build": "pnpm build:all",
+    "dev:types": "pnpm --filter @igrp/process-studio-frontend-types dev",
+    "dev:studio": "pnpm --filter @igrp/studio-demo dev",
+    "clean": "pnpm --filter @igrp/process-studio-frontend-types clean && pnpm --filter @igrp/studio-demo clean",
+    "clean:all": "pnpm -r exec rm -rf dist node_modules && pnpm install"
+  },
+  "author": "",
+  "license": "ISC"
+}
