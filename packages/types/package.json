@@ -1,5 +1,5 @@
 {
-  "name": "@igrp/process-studio-frontend-types",
+  "name": "@igrp/framework-process-studio-types",
   "version": "0.0.1-beta.1",
   "type": "module",
   "description": "IGRP Process Studio Frontend | Types",
