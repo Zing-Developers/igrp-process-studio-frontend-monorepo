@@ -1,0 +1,91 @@
+import { BaseApiClient } from './base-api-client';
+import { ApiClientConfig } from './types';
+import type {
+  ProcessDefinition,
+  Project,
+  PaginatedResponse,
+} from '@igrp/framework-process-studio-types';
+
+export class ProcessStudioApiClient extends BaseApiClient {
+  constructor(config: ApiClientConfig) {
+    super(config);
+  }
+
+  // Project endpoints
+  async getProjects(): Promise<PaginatedResponse<Project>> {
+    const response = await this.get<PaginatedResponse<Project>>('/api/v1/projects');
+    return response.data;
+  }
+
+  async getProjectById(projectId: string): Promise<Project> {
+    const response = await this.get<Project>(`/api/v1/projects/${projectId}`);
+    return response.data;
+  }
+
+  async createProject(project: Project): Promise<Project> {
+    const response = await this.post<Project>('/api/v1/projects', project);
+    return response.data;
+  }
+
+  async updateProject(project: Project): Promise<Project> {
+    const response = await this.put<Project>('/api/v1/projects', project);
+    return response.data;
+  }
+
+  async deleteProject(code: string): Promise<any> {
+    const response = await this.delete<any>(`/api/v1/projects/${code}`);
+    return response.data;
+  }
+
+  // Process Definition endpoints
+  async getProcessDefinitionById(processDefinitionId: string): Promise<ProcessDefinition> {
+    const response = await this.get<ProcessDefinition>(
+      `/api/v1/projects/process-definitions/${processDefinitionId}`,
+    );
+    return response.data;
+  }
+
+  async createProcessDefinition(
+    projectId: string,
+    processDefinition: ProcessDefinition,
+  ): Promise<ProcessDefinition> {
+    const response = await this.post<ProcessDefinition>(
+      `/api/v1/projects/process-definitions?projectId=${projectId}`,
+      processDefinition,
+    );
+    return response.data;
+  }
+
+  async updateProcessDefinition(
+    projectId: string,
+    processDefinition: ProcessDefinition,
+  ): Promise<ProcessDefinition> {
+    const response = await this.put<ProcessDefinition>(
+      `/api/v1/projects/process-definitions/${projectId}`,
+      processDefinition,
+    );
+    return response.data;
+  }
+
+  async saveDiagramProcessDefinition(
+    processDefinitionId: string,
+    processDefinition: ProcessDefinition,
+  ): Promise<any> {
+    const response = await this.put<any>(
+      `/api/v1/projects/process-definitions/${processDefinitionId}/diagram`,
+      processDefinition,
+    );
+    return response.data;
+  }
+
+  async deployProcessDefinition(
+    processDefinitionId: string,
+    processDefinition: ProcessDefinition,
+  ): Promise<any> {
+    const response = await this.post<any>(
+      `/api/v1/projects/process-definitions/${processDefinitionId}/deploy`,
+      processDefinition,
+    );
+    return response.data;
+  }
+}

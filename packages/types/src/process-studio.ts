@@ -1,0 +1,34 @@
+import type { Project, ProcessDefinition, PaginatedResponse } from './index';
+
+export interface ProcessStudioClientConfig {
+  baseUrl: string;
+  apiKey?: string;
+  timeout?: number;
+  headers?: Record<string, string>;
+}
+
+export interface ProcessStudioClient {
+  projects: {
+    getAll: () => Promise<PaginatedResponse<Project>>;
+    getById: (id: string) => Promise<Project>;
+    create: (project: Project) => Promise<Project>;
+    update: (project: Project) => Promise<Project>;
+    createOrUpdate: (project: Project) => Promise<Project>;
+    delete: (code: string) => Promise<any>;
+  };
+  processDefinitions: {
+    getAll: () => Promise<ProcessDefinition[]>;
+    getById: (id: string) => Promise<ProcessDefinition>;
+    create: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
+    update: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
+    createOrUpdate: (processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
+    saveDiagram: (
+      processDefinitionId: string,
+      processDefinition: ProcessDefinition,
+    ) => Promise<Response>;
+    deploy: (
+      processDefinitionId: string,
+      processDefinition: ProcessDefinition,
+    ) => Promise<Response>;
+  };
+}

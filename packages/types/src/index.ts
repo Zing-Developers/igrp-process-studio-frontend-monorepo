@@ -25,3 +25,6 @@ export interface ProcessDefinition {
   version: string;
   statusDesc: string;
 }
+
+// Process Studio Client Types
+export * from './process-studio';
