@@ -24,6 +24,9 @@ export interface ProcessDefinition {
   processDefinitionId: string;
   version: string;
   statusDesc: string;
+  bpmFileContent: string;
+  processKey: string;
+  content: string;
 }
 
 // Process Studio Client Types
