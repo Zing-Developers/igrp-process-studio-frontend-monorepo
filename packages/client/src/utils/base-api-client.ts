@@ -1,4 +1,4 @@
-import { ApiClientConfig, ApiResponse, UploadFileOptions, UserFilters } from './types';
+import { ApiClientConfig, ApiResponse } from './types';
 
 export class BaseApiClient {
   protected baseUrl: string;
@@ -73,7 +73,7 @@ export class BaseApiClient {
     endpoint: string,
     body?: any,
     params?: {
-      params: UserFilters | UploadFileOptions | undefined;
+      params: undefined;
       headers?: Record<string, string>;
     },
   ): Promise<ApiResponse<T>> {

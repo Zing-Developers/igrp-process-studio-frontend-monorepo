@@ -1,4 +1,9 @@
-import type { Project, ProcessDefinition, PaginatedResponse } from './index';
+import type {
+  Project,
+  ProcessDefinition,
+  PaginatedResponse,
+  ProcessDefinitionContent,
+} from './index';
 
 export interface ProcessStudioClientConfig {
   baseUrl: string;
@@ -24,11 +29,11 @@ export interface ProcessStudioClient {
     createOrUpdate: (processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
     saveDiagram: (
       processDefinitionId: string,
-      processDefinition: ProcessDefinition,
+      processDefinition: ProcessDefinitionContent,
     ) => Promise<Response>;
     deploy: (
       processDefinitionId: string,
-      processDefinition: ProcessDefinition,
+      processDefinition: ProcessDefinitionContent,
     ) => Promise<Response>;
   };
 }

@@ -10,7 +10,7 @@
     "build:studio": "pnpm --filter @igrp/studio-demo build",
     "build:bpmn-editor": "pnpm --filter @igrp/framework-process-studio-bpmn-editor build",
     "build:client": "pnpm --filter @igrp/framework-process-studio-client build",
-    "build:all": "pnpm build:types && pnpm build:bpmn-editor  && pnpm build:client && pnpm build:studio",
+    "build:all": "pnpm build:types && pnpm build:bpmn-editor  && pnpm build:client",
     "build": "pnpm build:all",
     "dev:types": "pnpm --filter @igrp/framework-process-studio-types dev",
     "dev:studio": "pnpm --filter @igrp/studio-demo dev",

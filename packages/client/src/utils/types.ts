@@ -9,11 +9,3 @@ export interface ApiResponse<T> {
   status: number;
   statusText: string;
 }
-
-export interface UserFilters {
-  [key: string]: any;
-}
-
-export interface UploadFileOptions {
-  [key: string]: any;
-}

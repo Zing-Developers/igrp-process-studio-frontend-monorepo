@@ -1,4 +1,7 @@
-import type { ProcessDefinition } from '@igrp/framework-process-studio-types';
+import type {
+  ProcessDefinition,
+  ProcessDefinitionContent,
+} from '@igrp/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
 export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClient) => {
@@ -33,14 +36,14 @@ export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClie
 
     saveDiagramProcessDefinition: async (
       processDefinitionId: string,
-      processDefinition: ProcessDefinition,
+      processDefinition: ProcessDefinitionContent,
     ): Promise<any> => {
       return apiClient.saveDiagramProcessDefinition(processDefinitionId, processDefinition);
     },
 
     deployProcessDefinition: async (
       processDefinitionId: string,
-      processDefinition: ProcessDefinition,
+      processDefinition: ProcessDefinitionContent,
     ): Promise<any> => {
       return apiClient.deployProcessDefinition(processDefinitionId, processDefinition);
     },

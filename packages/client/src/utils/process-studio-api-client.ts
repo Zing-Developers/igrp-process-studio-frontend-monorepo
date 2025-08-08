@@ -4,6 +4,7 @@ import type {
   ProcessDefinition,
   Project,
   PaginatedResponse,
+  ProcessDefinitionContent,
 } from '@igrp/framework-process-studio-types';
 
 export class ProcessStudioApiClient extends BaseApiClient {
@@ -69,7 +70,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
 
   async saveDiagramProcessDefinition(
     processDefinitionId: string,
-    processDefinition: ProcessDefinition,
+    processDefinition: ProcessDefinitionContent,
   ): Promise<any> {
     const response = await this.put<any>(
       `/api/v1/projects/process-definitions/${processDefinitionId}/diagram`,
@@ -80,7 +81,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
 
   async deployProcessDefinition(
     processDefinitionId: string,
-    processDefinition: ProcessDefinition,
+    processDefinition: ProcessDefinitionContent,
   ): Promise<any> {
     const response = await this.post<any>(
       `/api/v1/projects/process-definitions/${processDefinitionId}/deploy`,
