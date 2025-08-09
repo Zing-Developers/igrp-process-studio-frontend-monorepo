@@ -69,6 +69,13 @@ export class BaseApiClient {
     return this.request<T>(url, { method: 'GET' });
   }
 
+  protected async patch<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  }
+
   protected async post<T>(
     endpoint: string,
     body?: any,

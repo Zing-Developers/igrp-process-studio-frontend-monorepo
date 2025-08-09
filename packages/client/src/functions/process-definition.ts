@@ -1,13 +1,15 @@
-import type {
-  ProcessDefinition,
-  ProcessDefinitionContent,
-} from '@igrp/framework-process-studio-types';
+import type { ProcessDefinition } from '@igrp/framework-process-studio-types';
+import { ProcessDefinitionContent } from '@igrp/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
 export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClient) => {
   return {
     getProcessDefinitionById: async (processDefinitionId: string): Promise<ProcessDefinition> => {
       return apiClient.getProcessDefinitionById(processDefinitionId);
+    },
+
+    deleteProcessDefinition: async (processDefinitionId: string): Promise<any> => {
+      return apiClient.deleteProcessDefinition(processDefinitionId);
     },
 
     createProcessDefinition: async (
@@ -35,17 +37,17 @@ export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClie
     },
 
     saveDiagramProcessDefinition: async (
-      processDefinitionId: string,
+      processkey: string,
       processDefinition: ProcessDefinitionContent,
     ): Promise<any> => {
-      return apiClient.saveDiagramProcessDefinition(processDefinitionId, processDefinition);
+      return apiClient.saveDiagramProcessDefinition(processkey, processDefinition);
     },
 
     deployProcessDefinition: async (
-      processDefinitionId: string,
+      processkey: string,
       processDefinition: ProcessDefinitionContent,
     ): Promise<any> => {
-      return apiClient.deployProcessDefinition(processDefinitionId, processDefinition);
+      return apiClient.deployProcessDefinition(processkey, processDefinition);
     },
   };
 };

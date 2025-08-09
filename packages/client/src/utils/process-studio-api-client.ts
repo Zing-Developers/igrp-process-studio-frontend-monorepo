@@ -4,8 +4,8 @@ import type {
   ProcessDefinition,
   Project,
   PaginatedResponse,
-  ProcessDefinitionContent,
 } from '@igrp/framework-process-studio-types';
+import { ProcessDefinitionContent } from '@igrp/framework-process-studio-types';
 
 export class ProcessStudioApiClient extends BaseApiClient {
   constructor(config: ApiClientConfig) {
@@ -46,12 +46,19 @@ export class ProcessStudioApiClient extends BaseApiClient {
     return response.data;
   }
 
+  async deleteProcessDefinition(processDefinitionId: string): Promise<any> {
+    const response = await this.patch<any>(
+      `/api/v1/projects/process-definitions/${processDefinitionId}`,
+    );
+    return response.data;
+  }
+
   async createProcessDefinition(
     projectId: string,
     processDefinition: ProcessDefinition,
   ): Promise<ProcessDefinition> {
     const response = await this.post<ProcessDefinition>(
-      `/api/v1/projects/process-definitions?projectId=${projectId}`,
+      `/api/v1/projects/${projectId}/process-definitions`,
       processDefinition,
     );
     return response.data;
@@ -69,22 +76,22 @@ export class ProcessStudioApiClient extends BaseApiClient {
   }
 
   async saveDiagramProcessDefinition(
-    processDefinitionId: string,
+    processkey: string,
     processDefinition: ProcessDefinitionContent,
   ): Promise<any> {
     const response = await this.put<any>(
-      `/api/v1/projects/process-definitions/${processDefinitionId}/diagram`,
+      `/api/v1/projects/process-definitions/${processkey}/diagram`,
       processDefinition,
     );
     return response.data;
   }
 
   async deployProcessDefinition(
-    processDefinitionId: string,
+    processkey: string,
     processDefinition: ProcessDefinitionContent,
   ): Promise<any> {
     const response = await this.post<any>(
-      `/api/v1/projects/process-definitions/${processDefinitionId}/deploy`,
+      `/api/v1/projects/process-definitions/${processkey}/deploy`,
       processDefinition,
     );
     return response.data;

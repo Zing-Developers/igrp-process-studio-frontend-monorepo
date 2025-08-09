@@ -24,16 +24,14 @@ export interface ProcessStudioClient {
   processDefinitions: {
     getAll: () => Promise<ProcessDefinition[]>;
     getById: (id: string) => Promise<ProcessDefinition>;
+    delete: (id: string) => Promise<any>;
     create: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
     update: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
     createOrUpdate: (processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
     saveDiagram: (
-      processDefinitionId: string,
+      processkey: string,
       processDefinition: ProcessDefinitionContent,
     ) => Promise<Response>;
-    deploy: (
-      processDefinitionId: string,
-      processDefinition: ProcessDefinitionContent,
-    ) => Promise<Response>;
+    deploy: (processkey: string, processDefinition: ProcessDefinitionContent) => Promise<Response>;
   };
 }
