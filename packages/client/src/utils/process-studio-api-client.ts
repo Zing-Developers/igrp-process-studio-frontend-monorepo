@@ -48,7 +48,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
 
   async deleteProcessDefinition(processDefinitionId: string): Promise<any> {
     const response = await this.patch<any>(
-      `/api/v1/projects/process-definitions/${processDefinitionId}`,
+      `/api/v1/projects/process-definitions/${processDefinitionId}/delete`,
     );
     return response.data;
   }
