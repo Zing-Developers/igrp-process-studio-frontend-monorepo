@@ -26,7 +26,7 @@
     "release": "pnpm build && yarn publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
   },
   "dependencies": {
-    "@igrp/framework-process-studio-types": "0.0.1-beta.1"
+    "@igrp/framework-process-studio-types": "0.0.1-beta.2"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

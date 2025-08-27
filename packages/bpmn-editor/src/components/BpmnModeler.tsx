@@ -24,6 +24,7 @@ interface BpmnModelerProps {
   onLoad?: (modeler: BpmnJS) => void;
   processKey: string;
   processName: string;
+  className?: string;
 }
 
 const BpmnModeler = ({
@@ -32,6 +33,7 @@ const BpmnModeler = ({
   onLoad,
   processKey,
   processName,
+  className,
 }: BpmnModelerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnJS | null>(null);
@@ -40,7 +42,7 @@ const BpmnModeler = ({
     if (!containerRef.current) return;
 
     let modeler: BpmnJS;
-    
+
     try {
       modeler = new BpmnJS({
         container: containerRef.current,
@@ -62,7 +64,7 @@ const BpmnModeler = ({
     }
 
     modelerRef.current = modeler;
-    
+
     // Wait for the modeler to be fully initialized
     const waitForModeler = () => {
       return new Promise<void>((resolve) => {
@@ -87,15 +89,15 @@ const BpmnModeler = ({
       try {
         // Wait for the modeler to be ready
         await waitForModeler();
-        
+
         // Now it's safe to call onLoad
         onLoad?.(modeler);
-        
+
         // Ensure the modeler is fully initialized before importing XML
-        await new Promise(resolve => setTimeout(resolve, 50));
-        
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
         const canvas = modeler.get("canvas");
-        
+
         if (xml) {
           // Use Promise API for importXML
           const result = await modeler.importXML(xml);
@@ -145,13 +147,13 @@ const BpmnModeler = ({
         console.error("Error destroying BPMN modeler:", err);
       }
     };
-      }, [onLoad, onChange, xml, processKey, processName]);
+  }, [onLoad, onChange, xml, processKey, processName]);
 
   const createNewDiagram = async (modeler: BpmnJS) => {
     try {
       // Ensure the modeler is ready before creating a new diagram
-      await new Promise(resolve => setTimeout(resolve, 25));
-      
+      await new Promise((resolve) => setTimeout(resolve, 25));
+
       const xml = diagramXML(processKey, processName);
       const canvas = modeler.get("canvas");
 
@@ -175,7 +177,10 @@ const BpmnModeler = ({
 
   return (
     <div
-      className={cn("flex h-[78vh] relative", "border rounded-lg", "bg-white")}
+      className={cn(
+        "flex h-[78vh] relative border rounded-lg bg-white",
+        className,
+      )}
     >
       <div
         ref={containerRef}
@@ -183,7 +188,7 @@ const BpmnModeler = ({
           "flex-1 w-full h-full transition-all duration-300 ease-in-out",
           "bg-[radial-gradient(circle_at_0.5px_0.5px,rgba(0,0,0,0.2)_0.5px,transparent_0)]",
           "bg-[length:10px_10px]",
-          "relative"
+          "relative",
         )}
       >
         {/* BPMN Controls */}

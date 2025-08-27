@@ -21,7 +21,8 @@
     "demo:test": "pnpm --filter @igrp/studio-demo test",
     "release:types": "pnpm --filter @igrp/framework-process-studio-types release",
     "release:client": "pnpm --filter @igrp/framework-process-studio-client release",
-    "release:all": "pnpm release:types && pnpm release:client",
+    "release:bpmn-editor": "pnpm --filter @igrp/framework-process-studio-bpmn-editor release",
+    "release:all": "pnpm release:types && pnpm release:client && pnpm release:bpmn-editor",
     "release": "pnpm release:all"
   },
   "author": "",

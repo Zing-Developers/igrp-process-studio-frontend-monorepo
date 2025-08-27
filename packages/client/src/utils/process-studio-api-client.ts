@@ -4,8 +4,8 @@ import type {
   ProcessDefinition,
   Project,
   PaginatedResponse,
+  ProcessDefinitionContent,
 } from '@igrp/framework-process-studio-types';
-import { ProcessDefinitionContent } from '@igrp/framework-process-studio-types';
 
 export class ProcessStudioApiClient extends BaseApiClient {
   constructor(config: ApiClientConfig) {

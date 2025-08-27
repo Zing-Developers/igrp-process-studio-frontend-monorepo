@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button } from './ui/button';
-import { Separator } from './ui/separator';
-import { Maximize, ZoomIn, ZoomOut } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from "react";
+import { Maximize, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  IGRPButton,
+  IGRPSeparator,
+} from "@igrp/igrp-framework-react-design-system";
 
 interface ZoomControlsProps {
   modeler: any;
@@ -20,26 +22,26 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     if (!modeler) return;
 
     try {
-      const canvas = modeler.get('canvas');
+      const canvas = modeler.get("canvas");
       if (canvas) {
         setZoomLevel(canvas.zoom());
       }
 
       // Listen for zoom changes
-      const eventBus = modeler.get('eventBus');
+      const eventBus = modeler.get("eventBus");
       if (eventBus) {
         const onZoomChanged = () => {
           setZoomLevel(canvas.zoom());
         };
 
-        eventBus.on('canvas.viewbox.changed', onZoomChanged);
+        eventBus.on("canvas.viewbox.changed", onZoomChanged);
 
         return () => {
-          eventBus.off('canvas.viewbox.changed', onZoomChanged);
+          eventBus.off("canvas.viewbox.changed", onZoomChanged);
         };
       }
     } catch (error) {
-      console.error('Error initializing zoom level:', error);
+      console.error("Error initializing zoom level:", error);
     }
   }, [modeler]);
 
@@ -48,13 +50,13 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     if (!modeler) return;
 
     try {
-      const canvas = modeler.get('canvas');
+      const canvas = modeler.get("canvas");
       const currentZoom = canvas.zoom();
       const newZoom = Math.min(currentZoom + ZOOM_STEP, MAX_ZOOM);
 
       canvas.zoom(newZoom);
     } catch (error) {
-      console.error('Error handling zoom in:', error);
+      console.error("Error handling zoom in:", error);
     }
   }, [modeler]);
 
@@ -63,13 +65,13 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     if (!modeler) return;
 
     try {
-      const canvas = modeler.get('canvas');
+      const canvas = modeler.get("canvas");
       const currentZoom = canvas.zoom();
       const newZoom = Math.max(currentZoom - ZOOM_STEP, MIN_ZOOM);
 
       canvas.zoom(newZoom);
     } catch (error) {
-      console.error('Error handling zoom out:', error);
+      console.error("Error handling zoom out:", error);
     }
   }, [modeler]);
 
@@ -78,10 +80,10 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     if (!modeler) return;
 
     try {
-      const canvas = modeler.get('canvas');
-      canvas.zoom('fit-viewport');
+      const canvas = modeler.get("canvas");
+      canvas.zoom("fit-viewport");
     } catch (error) {
-      console.error('Error handling reset zoom:', error);
+      console.error("Error handling reset zoom:", error);
     }
   }, [modeler]);
 
@@ -90,7 +92,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     if (!modeler) return;
 
     try {
-      const keyboard = modeler.get('keyboard');
+      const keyboard = modeler.get("keyboard");
 
       // Removida a linha que causava o erro: const keyboardBindings = keyboard.getBindings();
 
@@ -98,7 +100,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       const zoomInListener = function (context: { keyEvent: any }) {
         const event = context.keyEvent;
 
-        if (keyboard.isKey(['=', '+'], event) && keyboard.isCmd(event)) {
+        if (keyboard.isKey(["=", "+"], event) && keyboard.isCmd(event)) {
           handleZoomIn();
           return true;
         }
@@ -108,7 +110,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       const zoomOutListener = function (context: { keyEvent: any }) {
         const event = context.keyEvent;
 
-        if (keyboard.isKey(['-', '_'], event) && keyboard.isCmd(event)) {
+        if (keyboard.isKey(["-", "_"], event) && keyboard.isCmd(event)) {
           handleZoomOut();
           return true;
         }
@@ -118,7 +120,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       const resetZoomListener = function (context: { keyEvent: any }) {
         const event = context.keyEvent;
 
-        if (keyboard.isKey(['0'], event) && keyboard.isCmd(event)) {
+        if (keyboard.isKey(["0"], event) && keyboard.isCmd(event)) {
           handleResetZoom();
           return true;
         }
@@ -135,11 +137,11 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
           keyboard.removeListener(zoomOutListener);
           keyboard.removeListener(resetZoomListener);
         } catch (error) {
-          console.error('Error removing keyboard listeners:', error);
+          console.error("Error removing keyboard listeners:", error);
         }
       };
     } catch (error) {
-      console.error('Error setting up keyboard shortcuts:', error);
+      console.error("Error setting up keyboard shortcuts:", error);
       // Continue rendering the component even if keyboard shortcuts fail
     }
   }, [modeler, handleZoomIn, handleZoomOut, handleResetZoom]);
@@ -149,7 +151,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     if (!modeler) return;
 
     try {
-      const canvas = modeler.get('canvas');
+      const canvas = modeler.get("canvas");
       if (!canvas || !canvas._container) return;
 
       const container = canvas._container;
@@ -182,7 +184,10 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
           );
 
           const distanceRatio = currentDistance / initialDistance;
-          const newZoom = Math.min(Math.max(initialZoom * distanceRatio, MIN_ZOOM), MAX_ZOOM);
+          const newZoom = Math.min(
+            Math.max(initialZoom * distanceRatio, MIN_ZOOM),
+            MAX_ZOOM,
+          );
 
           canvas.zoom(newZoom);
 
@@ -190,47 +195,44 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
         }
       };
 
-      container.addEventListener('touchstart', handleTouchStart);
-      container.addEventListener('touchmove', handleTouchMove);
+      container.addEventListener("touchstart", handleTouchStart);
+      container.addEventListener("touchmove", handleTouchMove);
 
       return () => {
-        container.removeEventListener('touchstart', handleTouchStart);
-        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
       };
     } catch (error) {
-      console.error('Error setting up touch gestures:', error);
+      console.error("Error setting up touch gestures:", error);
       // Continue rendering the component even if touch gestures fail
     }
   }, [modeler]);
 
   return (
     <div className="flex flex-col gap-1">
-      <Button
+      <IGRPButton
         onClick={handleZoomIn}
         title="Aumentar Zoom (Ctrl++)"
-        size={'icon'}
+        size={"icon"}
         variant="outline"
-      >
-        <ZoomIn />
-      </Button>
-      <Separator />
-      <Button
+        iconName="ZoomIn"
+      ></IGRPButton>
+      <IGRPSeparator />
+      <IGRPButton
         onClick={handleZoomOut}
         title="Diminuir Zoom (Ctrl+-)"
-        size={'icon'}
+        size={"icon"}
         variant="outline"
-      >
-        <ZoomOut />
-      </Button>
-      <Separator />
-      <Button
+        iconName="ZoomOut"
+      ></IGRPButton>
+      <IGRPSeparator />
+      <IGRPButton
         onClick={handleResetZoom}
         title="Ajustar à Tela (Ctrl+0)"
-        size={'icon'}
+        size={"icon"}
         variant="outline"
-      >
-        <Maximize />
-      </Button>
+        iconName="Maximize"
+      ></IGRPButton>
     </div>
   );
 };

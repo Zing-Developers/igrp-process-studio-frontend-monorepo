@@ -1,45 +1,100 @@
 {
   "name": "@igrp/framework-process-studio-bpmn-editor",
-  "version": "1.0.0",
+  "version": "0.1.0-beta.1",
+  "description": "IGRP Framework for Next.js | Design System components",
+  "keywords": [
+    "igrp",
+    "framework",
+    "nextjs",
+    "layout",
+    "components",
+    "client side"
+  ],
+  "author": "IGRP Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "pnpm build:reactcompiler",
+    "build:babel": "rimraf dist_optimized && babel dist --out-dir dist_optimized --source-maps --extensions .ts,.js,.tsx,.jsx,.cjs,.mjs && rimraf dist && move dist_optimized dist && cpy src/*.css dist/",
+    "build:reactcompiler": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm tailwind:build && pnpm build:swc && pnpm build:babel && pnpm build:types",
+    "build:swc": "swc ./src -d dist --config-file .swcrc --strip-leading-paths && cpy src/*.css dist/",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist/",
+    "build:without_reactcompiler": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm build:types && pnpm build:swc",
+    "clean": "pnpm clean:dist && pnpm clean:packages",
+    "clean:dist": "rimraf {dist,*.tsbuildinfo}",
+    "clean:packages": "rimraf node_modules",
+    "format": "prettier --write .",
+    "tailwind:build": "npx @tailwindcss/cli -i ./src/styles/index.css -o ./src/styles.css",
+    "release": "pnpm format && pnpm build && yarn publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
+  },
+  "peerDependencies": {
+    "next": "15.4.6",
+    "next-auth": "^4.24.11",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "dependencies": {
+    "@igrp/igrp-framework-react-design-system": "latest",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^3.25.67",
+    "@bpmn-io/properties-panel": "^3.30.2",
+    "bpmn-js": "^18.6.2",
+    "bpmn-js-properties-panel": "^5.38.1",
+    "bpmn-js-token-simulation": "^0.38.1",
+    "camunda-bpmn-js-behaviors": "^1.10.2",
+    "camunda-bpmn-moddle": "^7.0.1",
+    "lucide-react": "^0.518.0"
+  },
+  "devDependencies": {
+    "next": "15.5.0",
+    "next-auth": "^4.24.11",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "@babel/cli": "7.28.3",
+    "@babel/core": "7.28.3",
+    "@babel/preset-env": "7.28.3",
+    "@babel/preset-react": "7.27.1",
+    "@babel/preset-typescript": "7.27.1",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.1",
+    "@tailwindcss/cli": "^4.1.11",
+    "@types/babel__preset-env": "7.10.0",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "19.1.7",
+    "babel-plugin-react-compiler": "19.1.0-rc.2",
+    "cpy-cli": "6.0.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.4",
+    "move-cli": "^2.0.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^4.0.0",
+    "tw-animate-css": "^1.3.4",
+    "typescript": "^5.9.2"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
   "type": "module",
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      }
+    }
+  },
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "scripts": {
-    "dev": "tsc --watch",
-    "build": "rimraf dist && rimraf tsconfig.tsbuildinfo && tsc",
-    "clean": "rimraf dist",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "release": "pnpm build && yarn publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest",
-    "tailwind:build": "npx @tailwindcss/cli -i ./src/styles/index.css -o ./src/styles.css"
-  },
-  "dependencies": {
-    "@igrp/framework-process-studio-types": "workspace:*",
-    "@radix-ui/react-separator": "^1.1.7",
-    "@radix-ui/react-slot": "^1.2.3",
-    "bpmn-js": "^18.6.2",
-    "bpmn-js-properties-panel": "^5.39.0",
-    "camunda-bpmn-js-behaviors": "^1.10.2",
-    "camunda-bpmn-moddle": "^7.0.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.536.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "tailwind-merge": "^3.3.1",
-    "tw-animate-css": "^1.3.6"
-  },
-  "devDependencies": {
-    "@types/node": "^24.1.0",
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.9.2"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "IGRP BPMN Editor Components"
+  "engines": {
+    "node": ">=20.x.x"
+  }
 }

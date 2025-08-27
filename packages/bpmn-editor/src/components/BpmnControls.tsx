@@ -6,9 +6,11 @@ import {
   showError,
   showSuccess,
 } from "./utils/bpmnUtils";
-import { Separator } from "./ui/separator";
-import { Button } from "./ui/button";
 import { Upload, FileText, Download, Image } from "lucide-react";
+import {
+  IGRPButton,
+  IGRPSeparator,
+} from "@igrp/igrp-framework-react-design-system";
 
 interface BpmnControlsProps {
   modeler: any;
@@ -99,14 +101,14 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
                 const filename = generateFilename(
                   processKey,
                   processName,
-                  "png"
+                  "png",
                 );
                 downloadFile(blob, filename, "image/png");
                 showSuccess("Image downloaded successfully!");
               }
             },
             "image/png",
-            0.95
+            0.95,
           );
         };
         img.src = svgUrl;
@@ -160,7 +162,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
           } catch (error) {
             showError(
               "Error importing diagram. Please check if the file is a valid BPMN XML file.",
-              error as Error
+              error as Error,
             );
           } finally {
             setIsLoading(false);
@@ -172,7 +174,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
         setIsLoading(false);
       }
     },
-    [modeler]
+    [modeler],
   );
 
   // Trigger file input click
@@ -221,54 +223,50 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
   return (
     <div className="flex flex-col gap-1">
       {/* Download Diagram as XML */}
-      <Button
+      <IGRPButton
         onClick={handleDownloadDiagram}
         title="Download Diagram (XML)"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
-      >
-        <FileText />
-      </Button>
+        iconName="FileText"
+      ></IGRPButton>
 
-      <Separator />
+      <IGRPSeparator />
 
       {/* Download Diagram as SVG */}
-      <Button
+      <IGRPButton
         onClick={handleDownloadSvg}
         title="Download as SVG"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
-      >
-        <Download />
-      </Button>
+        iconName="Download"
+      ></IGRPButton>
 
-      <Separator />
+      <IGRPSeparator />
 
       {/* Download Diagram as Image */}
-      <Button
+      <IGRPButton
         onClick={handleDownloadImage}
         title="Download as Image (PNG)"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
-      >
-        <Image />
-      </Button>
+        iconName="Image"
+      ></IGRPButton>
 
-      <Separator />
+      <IGRPSeparator />
 
       {/* Upload Diagram */}
-      <Button
+      <IGRPButton
         onClick={handleUploadClick}
         title="Upload Diagram"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
-      >
-        <Upload />
-      </Button>
+        iconName="Upload"
+      ></IGRPButton>
 
       {/* Hidden file input */}
       <input
