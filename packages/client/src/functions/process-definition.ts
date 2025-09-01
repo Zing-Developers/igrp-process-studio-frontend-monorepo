@@ -1,4 +1,4 @@
-import type { ProcessDefinition } from '@igrp/framework-process-studio-types';
+import type { ProcessDefinition, VariableDefinition } from '@igrp/framework-process-studio-types';
 import { ProcessDefinitionContent } from '@igrp/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
@@ -48,6 +48,13 @@ export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClie
       processDefinition: ProcessDefinitionContent,
     ): Promise<any> => {
       return apiClient.deployProcessDefinition(processkey, processDefinition);
+    },
+
+    createOrUpdateVariable: async (
+      processDefinitionId: string,
+      variable: VariableDefinition[],
+    ): Promise<VariableDefinition[]> => {
+      return apiClient.createOrUpdateVariable(processDefinitionId, variable);
     },
   };
 };

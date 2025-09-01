@@ -5,6 +5,7 @@ import type {
   Project,
   PaginatedResponse,
   ProcessDefinitionContent,
+  VariableDefinition,
 } from '@igrp/framework-process-studio-types';
 
 export class ProcessStudioApiClient extends BaseApiClient {
@@ -93,6 +94,17 @@ export class ProcessStudioApiClient extends BaseApiClient {
     const response = await this.post<any>(
       `/api/v1/projects/process-definitions/${processkey}/deploy`,
       processDefinition,
+    );
+    return response.data;
+  }
+
+  async createOrUpdateVariable(
+    processDefinitionId: string,
+    variable: VariableDefinition[],
+  ): Promise<VariableDefinition[]> {
+    const response = await this.post<VariableDefinition[]>(
+      `/api/v1/projects/process-definitions/${processDefinitionId}/variables`,
+      variable,
     );
     return response.data;
   }

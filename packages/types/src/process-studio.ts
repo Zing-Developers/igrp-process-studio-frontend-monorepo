@@ -3,6 +3,7 @@ import type {
   ProcessDefinition,
   PaginatedResponse,
   ProcessDefinitionContent,
+  VariableDefinition,
 } from './index';
 
 export interface ProcessStudioClientConfig {
@@ -33,5 +34,9 @@ export interface ProcessStudioClient {
       processDefinition: ProcessDefinitionContent,
     ) => Promise<Response>;
     deploy: (processkey: string, processDefinition: ProcessDefinitionContent) => Promise<Response>;
+    createOrUpdateVariable: (
+      processDefinitionId: string,
+      variable: VariableDefinition[],
+    ) => Promise<VariableDefinition[]>;
   };
 }

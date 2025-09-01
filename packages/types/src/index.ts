@@ -32,5 +32,13 @@ export interface ProcessDefinitionContent {
   content: string;
 }
 
+export interface VariableDefinition {
+  id: string;
+  name: string;
+  type: string;
+  defaultValue: string;
+  required: boolean;
+}
+
 // Process Studio Client Types
 export * from './process-studio';
