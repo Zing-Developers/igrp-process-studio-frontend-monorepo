@@ -38,5 +38,6 @@ export interface ProcessStudioClient {
       processDefinitionId: string,
       variable: VariableDefinition[],
     ) => Promise<VariableDefinition[]>;
+    getVariables: (processDefinitionId: string) => Promise<VariableDefinition[]>;
   };
 }

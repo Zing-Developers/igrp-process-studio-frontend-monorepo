@@ -42,6 +42,7 @@ export function createProcessStudioClient(config: ProcessStudioClientConfig): Pr
       saveDiagram: processDefinitionFunctions.saveDiagramProcessDefinition,
       deploy: processDefinitionFunctions.deployProcessDefinition,
       createOrUpdateVariable: processDefinitionFunctions.createOrUpdateVariable,
+      getVariables: processDefinitionFunctions.getVariables,
     },
   };
 }

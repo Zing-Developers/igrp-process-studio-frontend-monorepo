@@ -56,5 +56,9 @@ export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClie
     ): Promise<VariableDefinition[]> => {
       return apiClient.createOrUpdateVariable(processDefinitionId, variable);
     },
+
+    getVariables: async (processDefinitionId: string): Promise<VariableDefinition[]> => {
+      return apiClient.getVariables(processDefinitionId);
+    },
   };
 };

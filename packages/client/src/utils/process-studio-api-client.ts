@@ -108,4 +108,11 @@ export class ProcessStudioApiClient extends BaseApiClient {
     );
     return response.data;
   }
+
+  async getVariables(processDefinitionId: string): Promise<VariableDefinition[]> {
+    const response = await this.get<VariableDefinition[]>(
+      `/api/v1/projects/process-definitions/${processDefinitionId}/variables`,
+    );
+    return response.data;
+  }
 }
