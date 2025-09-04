@@ -1,6 +1,6 @@
 import { cn } from "../lib/utils";
 import BpmnJS from "bpmn-js/lib/Modeler";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import "bpmn-js/dist/assets/bpmn-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import "bpmn-js/dist/assets/diagram-js.css";
@@ -37,6 +37,7 @@ const BpmnModeler = ({
 }: BpmnModelerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnJS | null>(null);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -175,6 +176,27 @@ const BpmnModeler = ({
     }
   };
 
+  const togglePanel = () => {
+    setIsPanelCollapsed((prev) => {
+      const next = !prev;
+      // Allow CSS transition to complete, then tell canvas to recalc size
+      setTimeout(() => {
+        try {
+          const canvas = modelerRef.current?.get("canvas");
+          if (canvas && typeof (canvas as any).resized === "function") {
+            (canvas as any).resized();
+          } else if (canvas && typeof (canvas as any).zoom === "function") {
+            (canvas as any).zoom("fit-viewport");
+          }
+        } catch (e) {
+          // no-op
+        }
+      }, 310);
+      return next;
+    });
+  };
+
+
   return (
     <div
       className={cn(
@@ -198,6 +220,8 @@ const BpmnModeler = ({
               modeler={modelerRef.current}
               processKey={processKey}
               processName={processName}
+              onTogglePanel={togglePanel}
+              isPanelCollapsed={isPanelCollapsed}
             />
           </div>
         )}
@@ -211,7 +235,10 @@ const BpmnModeler = ({
       </div>
       <div
         id="js-properties-panel"
-        className="w-80 h-full  border-l overflow-y-auto"
+        className={cn(
+          "h-full overflow-y-auto transition-all duration-300 ease-in-out",
+          isPanelCollapsed ? "w-0" : "w-80 border-l",
+        )}
       />
     </div>
   );

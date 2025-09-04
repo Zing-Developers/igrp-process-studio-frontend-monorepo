@@ -6,7 +6,6 @@ import {
   showError,
   showSuccess,
 } from "./utils/bpmnUtils";
-import { Upload, FileText, Download, Image } from "lucide-react";
 import {
   IGRPButton,
   IGRPSeparator,
@@ -16,12 +15,16 @@ interface BpmnControlsProps {
   modeler: any;
   processKey: string;
   processName: string;
+  onTogglePanel?: () => void;
+  isPanelCollapsed?: boolean;
 }
 
 const BpmnControls: React.FC<BpmnControlsProps> = ({
   modeler,
   processKey,
   processName,
+  onTogglePanel,
+  isPanelCollapsed,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -222,6 +225,20 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
 
   return (
     <div className="flex flex-col gap-1">
+      {/* Toggle Properties Panel */}
+      {onTogglePanel && (
+        <IGRPButton
+          onClick={onTogglePanel}
+          title={isPanelCollapsed ? "Show Properties Panel" : "Hide Properties Panel"}
+          size={"icon"}
+          variant="outline"
+          disabled={isLoading}
+          iconName={isPanelCollapsed ? "PanelRightOpen" : "PanelRightClose"}
+        ></IGRPButton>
+      )}
+
+      {onTogglePanel && <IGRPSeparator />}
+
       {/* Download Diagram as XML */}
       <IGRPButton
         onClick={handleDownloadDiagram}
