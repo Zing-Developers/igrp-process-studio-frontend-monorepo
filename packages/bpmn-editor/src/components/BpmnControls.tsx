@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import {
   downloadFile,
-  validateBpmnFile,
   generateFilename,
   showError,
   showSuccess,
@@ -9,7 +8,10 @@ import {
 import {
   IGRPButton,
   IGRPSeparator,
+  IGRPToastProps,
+  useIGRPToast,
 } from "@igrp/igrp-framework-react-design-system";
+import { SaveSVGResult } from "bpmn-js/lib/BaseViewer";
 
 interface BpmnControlsProps {
   modeler: any;
@@ -17,6 +19,8 @@ interface BpmnControlsProps {
   processName: string;
   onTogglePanel?: () => void;
   isPanelCollapsed?: boolean;
+  onUploadDiagram?: (xml: string) => void;
+  onDownLoadSvg?: () => Promise<SaveSVGResult | undefined>;
 }
 
 const BpmnControls: React.FC<BpmnControlsProps> = ({
@@ -25,9 +29,13 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
   processName,
   onTogglePanel,
   isPanelCollapsed,
+  onUploadDiagram,
+  onDownLoadSvg,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { igrpToast } = useIGRPToast();
 
   // Download diagram as XML
   const handleDownloadDiagram = useCallback(async () => {
@@ -39,9 +47,16 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
 
       const filename = generateFilename(processKey, processName, "bpmn");
       downloadFile(xml, filename, "application/xml");
-      showSuccess("Diagram downloaded successfully!");
+      igrpToast({
+        type: "success",
+        title: "Diagram downloaded successfully!",
+      });
     } catch (error) {
       showError("Error downloading diagram. Please try again.", error as Error);
+      igrpToast({
+        type: "error",
+        title: "Error downloading diagram. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -53,72 +68,79 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
 
     setIsLoading(true);
     try {
-      const canvas = modeler.get("canvas");
-      const container = canvas.get("container");
+      const result = await onDownLoadSvg?.();
 
-      // Get the SVG element from the canvas
-      const svgElement = container.querySelector("svg");
-      if (!svgElement) {
-        console.error("SVG element not found");
-        return;
+      if (typeof result?.svg !== "string" || result?.svg == null) {
+        throw new Error("Invalid SVG output from modeler.saveSVG()");
       }
+      const svgString = result.svg;
 
-      // Get the current viewbox to capture the full diagram
-      const viewbox = canvas.viewbox();
-      const { x, y, width, height } = viewbox;
+      // Prefer a data URL to avoid Blob-related edge cases
+      const svgDataUrl =
+        "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
 
-      // Create a temporary SVG with the current view
-      const tempSvg = svgElement.cloneNode(true) as SVGElement;
-      tempSvg.setAttribute("width", width.toString());
-      tempSvg.setAttribute("height", height.toString());
-      tempSvg.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
+      // Determine output dimensions
+      let renderWidth = 0;
+      let renderHeight = 0;
 
-      // Convert SVG to data URL
-      const svgData = new XMLSerializer().serializeToString(tempSvg);
-      const svgBlob = new Blob([svgData], {
-        type: "image/svg+xml;charset=utf-8",
-      });
-      const svgUrl = URL.createObjectURL(svgBlob);
+      // Try extracting from viewBox as a fallback
+      const viewBoxMatch = svgString.match(/viewBox=\"([\d\s.-]+)\"/i);
+      if (viewBoxMatch && viewBoxMatch[1]) {
+        const parts = viewBoxMatch[1].split(/\s+/).map(Number);
+        if (parts.length === 4) {
+          renderWidth = Math.max(1, Math.floor(parts[2] ?? 0));
+          renderHeight = Math.max(1, Math.floor(parts[3] ?? 0));
+        }
+      }
 
       // Create canvas for conversion
       const tempCanvas = document.createElement("canvas");
       const ctx = tempCanvas.getContext("2d");
-
-      // Set canvas size with higher resolution
-      const scale = 2;
-      tempCanvas.width = width * scale;
-      tempCanvas.height = height * scale;
-
-      if (ctx) {
-        ctx.scale(scale, scale);
-
-        // Create image from SVG
-        const img = new window.Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // Download the PNG
-          tempCanvas.toBlob(
-            (blob) => {
-              if (blob) {
-                const filename = generateFilename(
-                  processKey,
-                  processName,
-                  "png",
-                );
-                downloadFile(blob, filename, "image/png");
-                showSuccess("Image downloaded successfully!");
-              }
-            },
-            "image/png",
-            0.95,
-          );
-        };
-        img.src = svgUrl;
+      if (!ctx) {
+        throw new Error("Canvas 2D context not available");
       }
 
-      // Clean up
-      setTimeout(() => URL.revokeObjectURL(svgUrl), 1000);
+      // Load the SVG into an Image element
+      const img = new window.Image();
+      img.crossOrigin = "anonymous";
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          const naturalW = (img as HTMLImageElement).naturalWidth || img.width;
+          const naturalH =
+            (img as HTMLImageElement).naturalHeight || img.height;
+
+          const width = renderWidth || naturalW || 1024;
+          const height = renderHeight || naturalH || 768;
+
+          // Set canvas size with higher resolution
+          const scale = 2;
+          tempCanvas.width = width * scale;
+          tempCanvas.height = height * scale;
+          ctx.setTransform(scale, 0, 0, scale, 0, 0);
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve();
+        };
+        img.onerror = () => reject(new Error("Failed to load SVG into image"));
+        img.src = svgDataUrl;
+      });
+
+      // Export canvas to PNG blob
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        tempCanvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("Canvas export failed"))),
+          "image/png",
+          0.95,
+        );
+      });
+
+      const filename = generateFilename(processKey, processName, "png");
+      downloadFile(blob, filename, "image/png");
+      igrpToast({
+        type: "success",
+        title: "Image downloaded successfully!",
+      });
     } catch (error) {
       showError("Error downloading image. Please try again.", error as Error);
     } finally {
@@ -134,29 +156,16 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
 
       setIsLoading(true);
       try {
-        // Validate the file
-        const isValid = await validateBpmnFile(file);
-        if (!isValid) {
-          showError("Invalid BPMN file. Please select a valid BPMN XML file.");
-          return;
-        }
-
         const reader = new FileReader();
         reader.onload = async (e) => {
           try {
             const xml = e.target?.result as string;
-            const result = await modeler.importXML(xml);
+            onUploadDiagram?.(xml);
 
-            const { warnings } = result;
-            if (warnings && warnings.length) {
-              console.warn("Warnings during BPMN import:", warnings);
-            }
-
-            // Fit to viewport after import
-            const canvas = modeler.get("canvas");
-            canvas.zoom("fit-viewport");
-
-            showSuccess("Diagram uploaded successfully!");
+            igrpToast({
+              type: "success",
+              title: "Diagram uploaded successfully!",
+            });
 
             // Clear the file input
             if (fileInputRef.current) {
@@ -191,31 +200,19 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
 
     setIsLoading(true);
     try {
-      const canvas = modeler.get("canvas");
-      const container = canvas.get("container");
+      const result = await onDownLoadSvg?.();
 
-      // Get the SVG element from the canvas
-      const svgElement = container.querySelector("svg");
-      if (!svgElement) {
-        console.error("SVG element not found");
-        return;
+      if (typeof result?.svg !== "string" || result?.svg == null) {
+        throw new Error("Invalid SVG output from modeler.saveSVG()");
       }
+      const svgString = result.svg;
 
-      // Get the current viewbox to capture the full diagram
-      const viewbox = canvas.viewbox();
-      const { x, y, width, height } = viewbox;
-
-      // Create a temporary SVG with the current view
-      const tempSvg = svgElement.cloneNode(true) as SVGElement;
-      tempSvg.setAttribute("width", width.toString());
-      tempSvg.setAttribute("height", height.toString());
-      tempSvg.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
-
-      // Convert SVG to string and download
-      const svgData = new XMLSerializer().serializeToString(tempSvg);
       const filename = generateFilename(processKey, processName, "svg");
-      downloadFile(svgData, filename, "image/svg+xml");
-      showSuccess("SVG downloaded successfully!");
+      downloadFile(svgString, filename, "image/svg+xml");
+      igrpToast({
+        type: "success",
+        title: "SVG downloaded successfully!",
+      });
     } catch (error) {
       showError("Error downloading SVG. Please try again.", error as Error);
     } finally {
@@ -229,7 +226,9 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
       {onTogglePanel && (
         <IGRPButton
           onClick={onTogglePanel}
-          title={isPanelCollapsed ? "Show Properties Panel" : "Hide Properties Panel"}
+          title={
+            isPanelCollapsed ? "Show Properties Panel" : "Hide Properties Panel"
+          }
           size={"icon"}
           variant="outline"
           disabled={isLoading}

@@ -17,6 +17,7 @@ import ZoomControls from "./ZoomControls";
 
 import CamundaBpmnModdle from "camunda-bpmn-moddle/resources/camunda.json";
 import BpmnControls from "./BpmnControls";
+import { SaveSVGResult } from "bpmn-js/lib/BaseViewer";
 
 interface BpmnModelerProps {
   xml?: string;
@@ -135,6 +136,8 @@ const BpmnModeler = ({
       }
     };
 
+    // Removed example snippet (debounce/setEncoded) not used in this app
+
     // Start initialization
     initializeModeler();
 
@@ -196,6 +199,18 @@ const BpmnModeler = ({
     });
   };
 
+  const onUploadDiagram = async (xml: string) => {
+    const canvas = modelerRef.current?.get("canvas");
+
+    await modelerRef.current?.importXML(xml);
+    (modelerRef.current?.get("canvas") as any).zoom("fit-viewport");
+
+    (canvas as any).zoom("fit-viewport");
+  };
+
+  const onDownLoadSvg = async (): Promise<SaveSVGResult | undefined> => {
+    return await modelerRef.current?.saveSVG();
+  };
 
   return (
     <div
@@ -215,20 +230,22 @@ const BpmnModeler = ({
       >
         {/* BPMN Controls */}
         {modelerRef.current && (
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
+          <div className="absolute top-4 right-4 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
             <BpmnControls
               modeler={modelerRef.current}
               processKey={processKey}
               processName={processName}
               onTogglePanel={togglePanel}
               isPanelCollapsed={isPanelCollapsed}
+              onUploadDiagram={onUploadDiagram}
+              onDownLoadSvg={onDownLoadSvg}
             />
           </div>
         )}
 
         {/* Zoom Controls */}
         {modelerRef.current && (
-          <div className="absolute bottom-10 right-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
+          <div className="absolute bottom-12 right-4 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
             <ZoomControls modeler={modelerRef.current} />
           </div>
         )}
