@@ -1,9 +1,20 @@
-import type { ProcessDefinition, VariableDefinition } from '@igrp/framework-process-studio-types';
+import type {
+  PaginatedResponse,
+  ProcessDefinition,
+  ProcessDefinitionFilter,
+  VariableDefinition,
+} from '@igrp/framework-process-studio-types';
 import { ProcessDefinitionContent } from '@igrp/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
 export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClient) => {
   return {
+    getProcessDefinitions: async (
+      filter?: ProcessDefinitionFilter,
+    ): Promise<PaginatedResponse<ProcessDefinition>> => {
+      return apiClient.getProcessDefinitions(filter);
+    },
+
     getProcessDefinitionById: async (processDefinitionId: string): Promise<ProcessDefinition> => {
       return apiClient.getProcessDefinitionById(processDefinitionId);
     },

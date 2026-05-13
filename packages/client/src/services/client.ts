@@ -34,6 +34,7 @@ export function createProcessStudioClient(config: ProcessStudioClientConfig): Pr
           })),
         );
       },
+      list: processDefinitionFunctions.getProcessDefinitions,
       getById: processDefinitionFunctions.getProcessDefinitionById,
       delete: processDefinitionFunctions.deleteProcessDefinition,
       create: processDefinitionFunctions.createProcessDefinition,
