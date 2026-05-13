@@ -199,8 +199,8 @@ importers:
   packages/client:
     dependencies:
       '@igrp/framework-process-studio-types':
-        specifier: 0.0.1-beta.6
-        version: 0.0.1-beta.6
+        specifier: 0.0.1-beta.15
+        version: 0.0.1-beta.15
     devDependencies:
       '@types/node':
         specifier: ^24.1.0
@@ -1017,8 +1017,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@igrp/framework-process-studio-types@0.0.1-beta.6':
-    resolution: {integrity: sha512-bBctMCoaBaD+uHhYc8AoSOnjZalyd5QvpeYHRw+rdAFLupgA5/RsauNV6+RvA1GvKOhtdpzaEIoN+9D1kdKydA==}
+  '@igrp/framework-process-studio-types@0.0.1-beta.15':
+    resolution: {integrity: sha512-XS92buTqCmTgvMueT/F2SK0oKskZY3qU5ROz86mnBw1q5hBub8WPAjIt8h9GNFLqUVfYwOaac4/polP9jayeCg==}
     engines: {node: '>=20.x.x'}
 
   '@igrp/igrp-framework-react-design-system@0.1.0-beta.1-12':
@@ -6417,7 +6417,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@igrp/framework-process-studio-types@0.0.1-beta.6': {}
+  '@igrp/framework-process-studio-types@0.0.1-beta.15': {}
 
   '@igrp/igrp-framework-react-design-system@0.1.0-beta.1-12(@types/react-dom@19.1.7(@types/react@19.1.12))(@types/react@19.1.12)(next@15.5.0(@babel/core@7.28.3)(babel-plugin-react-compiler@19.1.0-rc.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:

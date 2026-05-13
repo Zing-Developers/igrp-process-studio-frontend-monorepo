@@ -5,6 +5,7 @@ import type {
   Project,
   PaginatedResponse,
   ProcessDefinitionContent,
+  ProcessDefinitionFilter,
   VariableDefinition,
 } from '@igrp/framework-process-studio-types';
 
@@ -40,6 +41,16 @@ export class ProcessStudioApiClient extends BaseApiClient {
   }
 
   // Process Definition endpoints
+  async getProcessDefinitions(
+    filter?: ProcessDefinitionFilter,
+  ): Promise<PaginatedResponse<ProcessDefinition>> {
+    const response = await this.get<PaginatedResponse<ProcessDefinition>>(
+      '/api/v1/projects/process-definitions',
+      filter as Record<string, any> | undefined,
+    );
+    return response.data;
+  }
+
   async getProcessDefinitionById(processDefinitionId: string): Promise<ProcessDefinition> {
     const response = await this.get<ProcessDefinition>(
       `/api/v1/projects/process-definitions/${processDefinitionId}`,
