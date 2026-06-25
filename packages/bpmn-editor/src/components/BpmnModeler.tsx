@@ -59,12 +59,23 @@ const BpmnModeler = ({
 }: BpmnModelerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnJS | null>(null);
-  // Latest XML the modeler holds, kept so we can re-render on a theme toggle
-  // without losing in-progress edits.
+  // The XML the modeler currently holds — whatever it last imported or emitted.
+  // Used to (a) restore the diagram when the modeler is recreated (theme toggle)
+  // and (b) recognise an echo of our own output coming back through the `xml`
+  // prop, so we don't reimport and blow away the user's selection/cursor.
   const latestXmlRef = useRef<string | undefined>(xml);
-  // Previous value of the `xml` prop, to tell an incoming-content change (honor
-  // the prop) apart from a theme toggle (keep current edits).
-  const prevXmlRef = useRef<string | undefined>(undefined);
+  // Freshest `xml` prop value (read after async init to catch content that
+  // arrived while the modeler was still initialising) and a flag marking the
+  // modeler ready, so the sync effect never imports concurrently with init.
+  const xmlPropRef = useRef<string | undefined>(xml);
+  xmlPropRef.current = xml;
+  const readyRef = useRef(false);
+  // Keep callbacks in refs so the modeler isn't recreated when their identity
+  // changes (e.g. the parent's handler closes over freshly-loaded data).
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const onLoadRef = useRef(onLoad);
+  onLoadRef.current = onLoad;
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   const [isDark, setIsDark] = useState(getIsDark);
 
@@ -107,6 +118,8 @@ const BpmnModeler = ({
     }
 
     modelerRef.current = modeler;
+    readyRef.current = false;
+    let disposed = false;
 
     // Wait for the modeler to be fully initialized
     const waitForModeler = () => {
@@ -134,26 +147,21 @@ const BpmnModeler = ({
         await waitForModeler();
 
         // Now it's safe to call onLoad
-        onLoad?.(modeler);
+        onLoadRef.current?.(modeler);
 
         // Ensure the modeler is fully initialized before importing XML
         await new Promise((resolve) => setTimeout(resolve, 50));
 
         const canvas = modeler.get("canvas");
 
-        // When the `xml` prop changes (new content from the parent) honor it;
-        // when it is unchanged (e.g. a theme toggle recreated the modeler) keep
-        // the latest edited XML so in-progress work survives.
-        const xmlPropChanged = xml !== prevXmlRef.current;
-        prevXmlRef.current = xml;
-        const initialXml = xmlPropChanged ? xml : (latestXmlRef.current ?? xml);
-        if (xmlPropChanged) {
-          latestXmlRef.current = xml;
-        }
+        // Restore whatever the modeler last held (current edits on a theme-toggle
+        // recreation, or the initial xml prop on first mount). Subsequent
+        // external xml changes are handled by the sync effect below, which
+        // imports into this same instance without recreating it.
+        const source = latestXmlRef.current;
 
-        if (initialXml) {
-          // Use Promise API for importXML
-          const result = await modeler.importXML(initialXml);
+        if (source) {
+          const result = await modeler.importXML(source);
           const { warnings } = result;
           if (warnings && warnings.length) {
             console.warn("Warnings during BPMN import:", warnings);
@@ -171,12 +179,26 @@ const BpmnModeler = ({
             // Ensure onChange is called only when xml is successfully retrieved
             if (xml) {
               latestXmlRef.current = xml;
-              onChange?.(xml);
+              onChangeRef.current?.(xml);
             }
           } catch (err) {
             console.error("Failed to save BPMN XML:", err);
           }
         });
+
+        // The modeler is ready; let the sync effect import external changes.
+        readyRef.current = true;
+
+        // Content may have arrived via the `xml` prop while we were still
+        // initialising (the sync effect bails until ready). Reconcile it now,
+        // sequentially, so we never run two imports at once.
+        const freshXml = xmlPropRef.current;
+        if (!disposed && freshXml && freshXml !== latestXmlRef.current) {
+          await modeler.importXML(freshXml);
+          if (disposed) return;
+          latestXmlRef.current = freshXml;
+          (modeler.get("canvas") as any).zoom("fit-viewport");
+        }
       } catch (err) {
         console.error("Error during modeler initialization:", err);
         // Fallback to creating a new diagram
@@ -194,6 +216,8 @@ const BpmnModeler = ({
     initializeModeler();
 
     return () => {
+      disposed = true;
+      readyRef.current = false;
       try {
         if (modelerRef.current) {
           (modelerRef.current as any).destroy();
@@ -203,7 +227,33 @@ const BpmnModeler = ({
         console.error("Error destroying BPMN modeler:", err);
       }
     };
-  }, [onLoad, onChange, xml, processKey, processName, isDark]);
+  }, [processKey, processName, isDark]);
+
+  // Sync genuinely-external xml changes into the existing modeler without
+  // recreating it. We skip echoes of our own output (the parent feeds the
+  // emitted xml back through this prop on every edit) so editing never reloads
+  // the diagram and loses the selected element / focused panel field.
+  useEffect(() => {
+    const modeler = modelerRef.current;
+    if (!modeler || !readyRef.current) return; // init reconciles otherwise
+    if (!xml) return; // nothing / placeholder
+    if (xml === latestXmlRef.current) return; // echo or already current
+
+    let cancelled = false;
+    (async () => {
+      try {
+        await modeler.importXML(xml);
+        if (cancelled) return;
+        latestXmlRef.current = xml;
+        (modeler.get("canvas") as any).zoom("fit-viewport");
+      } catch (err) {
+        console.error("Failed to import BPMN XML:", err);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [xml]);
 
   const createNewDiagram = async (modeler: BpmnJS) => {
     try {
@@ -225,7 +275,7 @@ const BpmnModeler = ({
 
       // Notify the change
       latestXmlRef.current = xml;
-      onChange?.(xml);
+      onChangeRef.current?.(xml);
     } catch (err) {
       console.error("Error creating new diagram:", err);
       throw err; // Re-throw to allow proper error handling
