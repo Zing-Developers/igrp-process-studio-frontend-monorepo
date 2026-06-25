@@ -62,6 +62,9 @@ const BpmnModeler = ({
   // Latest XML the modeler holds, kept so we can re-render on a theme toggle
   // without losing in-progress edits.
   const latestXmlRef = useRef<string | undefined>(xml);
+  // Previous value of the `xml` prop, to tell an incoming-content change (honor
+  // the prop) apart from a theme toggle (keep current edits).
+  const prevXmlRef = useRef<string | undefined>(undefined);
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   const [isDark, setIsDark] = useState(getIsDark);
 
@@ -138,9 +141,15 @@ const BpmnModeler = ({
 
         const canvas = modeler.get("canvas");
 
-        // Prefer the latest edited XML (preserved across theme toggles) over
-        // the initial prop.
-        const initialXml = latestXmlRef.current ?? xml;
+        // When the `xml` prop changes (new content from the parent) honor it;
+        // when it is unchanged (e.g. a theme toggle recreated the modeler) keep
+        // the latest edited XML so in-progress work survives.
+        const xmlPropChanged = xml !== prevXmlRef.current;
+        prevXmlRef.current = xml;
+        const initialXml = xmlPropChanged ? xml : (latestXmlRef.current ?? xml);
+        if (xmlPropChanged) {
+          latestXmlRef.current = xml;
+        }
 
         if (initialXml) {
           // Use Promise API for importXML
