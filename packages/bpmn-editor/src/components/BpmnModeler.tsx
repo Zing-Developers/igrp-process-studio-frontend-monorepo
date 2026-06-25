@@ -6,6 +6,7 @@ import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
 import "@bpmn-io/properties-panel/assets/properties-panel.css";
+import "../bpmn-theme.css";
 import diagramXML from "../resources/newDiagram";
 
 import {
@@ -28,6 +29,26 @@ interface BpmnModelerProps {
   className?: string;
 }
 
+// Theme follows the `.dark` class set on <html> by next-themes.
+const getIsDark = () =>
+  typeof document !== "undefined" &&
+  document.documentElement.classList.contains("dark");
+
+// Default element colors handed to bpmn-js' BpmnRenderer. Elements with their
+// own BPMN di colors keep them — these only fill in the defaults.
+const rendererColors = (isDark: boolean) =>
+  isDark
+    ? {
+        defaultFillColor: "hsl(240, 6%, 16%)",
+        defaultStrokeColor: "hsl(225, 10%, 90%)",
+        defaultLabelColor: "hsl(225, 10%, 90%)",
+      }
+    : {
+        defaultFillColor: "white",
+        defaultStrokeColor: "black",
+        defaultLabelColor: "black",
+      };
+
 const BpmnModeler = ({
   xml,
   onChange,
@@ -38,7 +59,23 @@ const BpmnModeler = ({
 }: BpmnModelerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnJS | null>(null);
+  // Latest XML the modeler holds, kept so we can re-render on a theme toggle
+  // without losing in-progress edits.
+  const latestXmlRef = useRef<string | undefined>(xml);
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
+  const [isDark, setIsDark] = useState(getIsDark);
+
+  // Watch the `.dark` class on <html> and follow the app theme at runtime.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const target = document.documentElement;
+    const observer = new MutationObserver(() => setIsDark(getIsDark()));
+    observer.observe(target, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -59,6 +96,7 @@ const BpmnModeler = ({
         moddleExtensions: {
           camunda: CamundaBpmnModdle,
         },
+        bpmnRenderer: rendererColors(isDark),
       });
     } catch (err) {
       console.error("Error creating BPMN modeler:", err);
@@ -100,9 +138,13 @@ const BpmnModeler = ({
 
         const canvas = modeler.get("canvas");
 
-        if (xml) {
+        // Prefer the latest edited XML (preserved across theme toggles) over
+        // the initial prop.
+        const initialXml = latestXmlRef.current ?? xml;
+
+        if (initialXml) {
           // Use Promise API for importXML
-          const result = await modeler.importXML(xml);
+          const result = await modeler.importXML(initialXml);
           const { warnings } = result;
           if (warnings && warnings.length) {
             console.warn("Warnings during BPMN import:", warnings);
@@ -119,6 +161,7 @@ const BpmnModeler = ({
             const { xml } = await modeler.saveXML({ format: true });
             // Ensure onChange is called only when xml is successfully retrieved
             if (xml) {
+              latestXmlRef.current = xml;
               onChange?.(xml);
             }
           } catch (err) {
@@ -151,7 +194,7 @@ const BpmnModeler = ({
         console.error("Error destroying BPMN modeler:", err);
       }
     };
-  }, [onLoad, onChange, xml, processKey, processName]);
+  }, [onLoad, onChange, xml, processKey, processName, isDark]);
 
   const createNewDiagram = async (modeler: BpmnJS) => {
     try {
@@ -172,6 +215,7 @@ const BpmnModeler = ({
       (canvas as any).zoom("fit-viewport");
 
       // Notify the change
+      latestXmlRef.current = xml;
       onChange?.(xml);
     } catch (err) {
       console.error("Error creating new diagram:", err);
@@ -215,7 +259,7 @@ const BpmnModeler = ({
   return (
     <div
       className={cn(
-        "flex h-[78vh] relative border rounded-lg bg-white",
+        "flex h-[78vh] relative border rounded-lg bg-white dark:bg-neutral-900 dark:border-neutral-700",
         className,
       )}
     >
@@ -224,13 +268,14 @@ const BpmnModeler = ({
         className={cn(
           "flex-1 w-full h-full transition-all duration-300 ease-in-out",
           "bg-[radial-gradient(circle_at_0.5px_0.5px,rgba(0,0,0,0.2)_0.5px,transparent_0)]",
+          "dark:bg-[radial-gradient(circle_at_0.5px_0.5px,rgba(255,255,255,0.12)_0.5px,transparent_0)]",
           "bg-[length:10px_10px]",
           "relative",
         )}
       >
         {/* BPMN Controls */}
         {modelerRef.current && (
-          <div className="absolute top-4 right-4 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
+          <div className="absolute top-4 right-4 backdrop-blur-sm bg-white/70 dark:bg-neutral-800/70 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-lg p-2 z-10">
             <BpmnControls
               modeler={modelerRef.current}
               processKey={processKey}
@@ -245,7 +290,7 @@ const BpmnModeler = ({
 
         {/* Zoom Controls */}
         {modelerRef.current && (
-          <div className="absolute bottom-12 right-4 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
+          <div className="absolute bottom-12 right-4 backdrop-blur-sm bg-white/70 dark:bg-neutral-800/70 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-lg p-2 z-10">
             <ZoomControls modeler={modelerRef.current} />
           </div>
         )}
@@ -254,7 +299,7 @@ const BpmnModeler = ({
         id="js-properties-panel"
         className={cn(
           "h-full overflow-y-auto transition-all duration-300 ease-in-out",
-          isPanelCollapsed ? "w-0" : "w-80 border-l",
+          isPanelCollapsed ? "w-0" : "w-80 border-l dark:border-neutral-700",
         )}
       />
     </div>

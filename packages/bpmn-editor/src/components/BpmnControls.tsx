@@ -8,7 +8,6 @@ import {
 import {
   IGRPButton,
   IGRPSeparator,
-  IGRPToastProps,
   useIGRPToast,
 } from "@igrp/igrp-framework-react-design-system";
 import { SaveSVGResult } from "bpmn-js/lib/BaseViewer";

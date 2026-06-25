@@ -1,6 +1,6 @@
 {
   "name": "@igrp/framework-process-studio-bpmn-editor",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0-beta.7",
   "description": "IGRP Framework for Next.js | Design System components",
   "keywords": [
     "igrp",
@@ -15,9 +15,9 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "pnpm build:reactcompiler",
-    "build:babel": "rimraf dist_optimized && babel dist --out-dir dist_optimized --source-maps --extensions .ts,.js,.tsx,.jsx,.cjs,.mjs && rimraf dist && move dist_optimized dist && cpy src/*.css dist/",
+    "build:babel": "rimraf dist_optimized && babel dist --out-dir dist_optimized --source-maps --extensions .ts,.js,.tsx,.jsx,.cjs,.mjs && rimraf dist && move dist_optimized dist && cpy 'src/*.css' dist/",
     "build:reactcompiler": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm tailwind:build && pnpm build:swc && pnpm build:babel && pnpm build:types",
-    "build:swc": "swc ./src -d dist --config-file .swcrc --strip-leading-paths && cpy src/*.css dist/",
+    "build:swc": "swc ./src -d dist --config-file .swcrc --strip-leading-paths && cpy 'src/*.css' dist/",
     "build:types": "tsc --emitDeclarationOnly --outDir dist/",
     "build:without_reactcompiler": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm build:types && pnpm build:swc",
     "clean": "pnpm clean:dist && pnpm clean:packages",
@@ -28,12 +28,14 @@
     "release": "pnpm format && pnpm build && yarn publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
   },
   "peerDependencies": {
-    "next": "15.4.6",
+    "next": "^15.4.6",
     "next-auth": "^4.24.11",
-    "react": "19.1.1",
-    "react-dom": "19.1.1"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "dependencies": {
+    "@bpmn-io/cm-theme": "^0.2.0",
+    "@bpmn-io/feel-editor": "^2.6.0",
     "@bpmn-io/properties-panel": "^3.30.2",
     "@igrp/igrp-framework-react-design-system": "latest",
     "bpmn-js": "^18.6.2",
@@ -65,7 +67,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
     "move-cli": "^2.0.0",
-    "next": "15.5.0",
+    "next": "15.5.9",
     "next-auth": "^4.24.11",
     "postcss": "^8.5.6",
     "prettier": "^3.5.3",
