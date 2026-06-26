@@ -154,11 +154,12 @@ const BpmnModeler = ({
 
         const canvas = modeler.get("canvas");
 
-        // Restore whatever the modeler last held (current edits on a theme-toggle
-        // recreation, or the initial xml prop on first mount). Subsequent
-        // external xml changes are handled by the sync effect below, which
-        // imports into this same instance without recreating it.
-        const source = latestXmlRef.current;
+        // Pick the content to load. Prefer in-progress edits preserved across a
+        // theme-toggle recreation (latestXmlRef); otherwise use the freshest xml
+        // prop — by now the parent has usually replaced the transient empty
+        // placeholder with the real process xml, so we avoid creating (and
+        // worse, auto-saving) a default diagram over real content.
+        const source = latestXmlRef.current || xmlPropRef.current;
 
         if (source) {
           const result = await modeler.importXML(source);
@@ -166,6 +167,7 @@ const BpmnModeler = ({
           if (warnings && warnings.length) {
             console.warn("Warnings during BPMN import:", warnings);
           }
+          latestXmlRef.current = source;
           // Adjust zoom after import
           (canvas as any).zoom("fit-viewport");
         } else {
