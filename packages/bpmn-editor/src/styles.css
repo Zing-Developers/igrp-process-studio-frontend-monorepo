@@ -209,11 +209,14 @@
   .flex {
     display: flex;
   }
-  .h-\[78vh\] {
-    height: 78vh;
+  .h-\[calc\(100dvh-13rem\)\] {
+    height: calc(100dvh - 13rem);
   }
   .h-full {
     height: 100%;
+  }
+  .min-h-\[480px\] {
+    min-height: 480px;
   }
   .w-0 {
     width: calc(var(--spacing) * 0);

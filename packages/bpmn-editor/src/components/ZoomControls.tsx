@@ -213,6 +213,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       <IGRPButton
         onClick={handleZoomIn}
         title="Aumentar Zoom (Ctrl++)"
+        aria-label="Aumentar Zoom"
         size={"icon"}
         variant="outline"
         iconName="ZoomIn"
@@ -221,6 +222,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       <IGRPButton
         onClick={handleZoomOut}
         title="Diminuir Zoom (Ctrl+-)"
+        aria-label="Diminuir Zoom"
         size={"icon"}
         variant="outline"
         iconName="ZoomOut"
@@ -229,6 +231,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       <IGRPButton
         onClick={handleResetZoom}
         title="Ajustar à Tela (Ctrl+0)"
+        aria-label="Ajustar à Tela"
         size={"icon"}
         variant="outline"
         iconName="Maximize"

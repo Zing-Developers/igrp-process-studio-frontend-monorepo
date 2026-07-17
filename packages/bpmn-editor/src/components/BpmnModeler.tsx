@@ -320,7 +320,7 @@ const BpmnModeler = ({
   return (
     <div
       className={cn(
-        "flex h-[78vh] relative border rounded-lg bg-white dark:bg-neutral-900 dark:border-neutral-700",
+        "flex h-[calc(100dvh-13rem)] min-h-[480px] relative border rounded-lg bg-white dark:bg-neutral-900 dark:border-neutral-700",
         className,
       )}
     >
