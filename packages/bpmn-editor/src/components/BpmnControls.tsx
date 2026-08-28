@@ -8,7 +8,6 @@ import {
 import {
   IGRPButton,
   IGRPSeparator,
-  IGRPToastProps,
   useIGRPToast,
 } from "@igrp/igrp-framework-react-design-system";
 import { SaveSVGResult } from "bpmn-js/lib/BaseViewer";
@@ -229,6 +228,9 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
           title={
             isPanelCollapsed ? "Show Properties Panel" : "Hide Properties Panel"
           }
+          aria-label={
+            isPanelCollapsed ? "Show Properties Panel" : "Hide Properties Panel"
+          }
           size={"icon"}
           variant="outline"
           disabled={isLoading}
@@ -242,6 +244,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
       <IGRPButton
         onClick={handleDownloadDiagram}
         title="Download Diagram (XML)"
+        aria-label="Download Diagram (XML)"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
@@ -254,6 +257,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
       <IGRPButton
         onClick={handleDownloadSvg}
         title="Download as SVG"
+        aria-label="Download as SVG"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
@@ -266,6 +270,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
       <IGRPButton
         onClick={handleDownloadImage}
         title="Download as Image (PNG)"
+        aria-label="Download as Image (PNG)"
         size={"icon"}
         variant="outline"
         disabled={isLoading}
@@ -278,6 +283,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({
       <IGRPButton
         onClick={handleUploadClick}
         title="Upload Diagram"
+        aria-label="Upload Diagram"
         size={"icon"}
         variant="outline"
         disabled={isLoading}

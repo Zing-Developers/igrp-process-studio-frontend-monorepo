@@ -3,6 +3,7 @@ import type {
   ProcessDefinition,
   PaginatedResponse,
   ProcessDefinitionContent,
+  ProcessDefinitionFilter,
   VariableDefinition,
 } from './index';
 
@@ -24,6 +25,7 @@ export interface ProcessStudioClient {
   };
   processDefinitions: {
     getAll: () => Promise<ProcessDefinition[]>;
+    list: (filter?: ProcessDefinitionFilter) => Promise<PaginatedResponse<ProcessDefinition>>;
     getById: (id: string) => Promise<ProcessDefinition>;
     delete: (id: string) => Promise<any>;
     create: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
