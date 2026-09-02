@@ -1,5 +1,5 @@
 {
-  "name": "@igrp/framework-process-studio-client",
+  "name": "@irn/framework-process-studio-client",
   "version": "0.0.1-beta.15",
   "type": "module",
   "description": "IGRP Process Studio Frontend | Client",
