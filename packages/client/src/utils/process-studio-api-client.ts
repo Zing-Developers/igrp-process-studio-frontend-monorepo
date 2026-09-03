@@ -7,7 +7,7 @@ import type {
   ProcessDefinitionContent,
   ProcessDefinitionFilter,
   VariableDefinition,
-} from '@igrp/framework-process-studio-types';
+} from '@irn/framework-process-studio-types';
 
 export class ProcessStudioApiClient extends BaseApiClient {
   constructor(config: ApiClientConfig) {

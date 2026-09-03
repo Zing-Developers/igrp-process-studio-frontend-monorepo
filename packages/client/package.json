@@ -23,10 +23,10 @@
     "build": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm format && tsc -b",
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "format": "prettier --write .",
-    "release": "pnpm build && yarn publish --registry=https://sonatype.nosi.cv/repository/igrp/ --tag latest"
+    "release": "pnpm build && pnpm publish --registry=https://nexus-1.zingaistudio.com/repository/npm-repo/ --tag latest"
   },
   "dependencies": {
-    "@igrp/framework-process-studio-types": "0.0.1-beta.15"
+    "@irn/framework-process-studio-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

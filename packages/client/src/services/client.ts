@@ -3,7 +3,7 @@ import { createProcessDefinitionFunctions } from '../functions/process-definitio
 import {
   ProcessStudioClient,
   ProcessStudioClientConfig,
-} from '@igrp/framework-process-studio-types';
+} from '@irn/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
 export function createProcessStudioClient(config: ProcessStudioClientConfig): ProcessStudioClient {

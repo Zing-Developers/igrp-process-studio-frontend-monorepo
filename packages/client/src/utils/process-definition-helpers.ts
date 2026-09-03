@@ -5,7 +5,7 @@
  * import these from `@igrp/framework-process-studio-client` to keep the
  * decoration/formatting consistent across UIs.
  */
-import type { AuditUser, ProcessDefinition } from '@igrp/framework-process-studio-types';
+import type { AuditUser, ProcessDefinition } from '@irn/framework-process-studio-types';
 
 /**
  * Formats a deployment date to `dd/MM/yyyy HH:mm`.

@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:demo": "pnpm --filter @igrp/studio-demo dev",
-    "build:types": "pnpm --filter @igrp/framework-process-studio-types build",
+    "build:types": "pnpm --filter @irn/framework-process-studio-types build",
+    "build:client": "pnpm --filter @irn/framework-process-studio-client build",
     "build:studio": "pnpm --filter @igrp/studio-demo build",
     "build:bpmn-editor": "pnpm --filter @igrp/framework-process-studio-bpmn-editor build",
-    "build:client": "pnpm --filter @igrp/framework-process-studio-client build",
     "build:all": "pnpm build:types && pnpm build:bpmn-editor  && pnpm build:client",
     "build": "pnpm build:all",
     "dev:types": "pnpm --filter @igrp/framework-process-studio-types dev",
@@ -19,8 +19,8 @@
     "clean": "pnpm --filter @igrp/framework-process-studio-types clean && pnpm --filter @igrp/studio-demo clean && pnpm --filter @igrp/framework-process-studio-bpmn-editor clean",
     "clean:all": "pnpm -r exec rm -rf dist node_modules && pnpm install",
     "demo:test": "pnpm --filter @igrp/studio-demo test",
-    "release:types": "pnpm --filter @igrp/framework-process-studio-types release",
-    "release:client": "pnpm --filter @igrp/framework-process-studio-client release",
+    "release:types": "pnpm --filter @irn/framework-process-studio-types release",
+    "release:client": "pnpm --filter @irn/framework-process-studio-client release",
     "release:bpmn-editor": "pnpm --filter @igrp/framework-process-studio-bpmn-editor release",
     "release:all": "pnpm release:types && pnpm release:client && pnpm release:bpmn-editor",
     "release": "pnpm release:all"

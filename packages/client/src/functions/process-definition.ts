@@ -3,8 +3,8 @@ import type {
   ProcessDefinition,
   ProcessDefinitionFilter,
   VariableDefinition,
-} from '@igrp/framework-process-studio-types';
-import { ProcessDefinitionContent } from '@igrp/framework-process-studio-types';
+} from '@irn/framework-process-studio-types';
+import { ProcessDefinitionContent } from '@irn/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
 export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClient) => {

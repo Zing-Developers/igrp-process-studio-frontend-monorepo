@@ -1,4 +1,4 @@
-import type { Project, PaginatedResponse } from '@igrp/framework-process-studio-types';
+import type { Project, PaginatedResponse } from '@irn/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
 export const createProjectFunctions = (apiClient: ProcessStudioApiClient) => {

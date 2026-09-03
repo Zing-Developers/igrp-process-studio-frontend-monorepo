@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@igrp/framework-process-studio-bpmn-editor": "workspace:*",
-    "@igrp/framework-process-studio-client": "workspace:*",
-    "@igrp/framework-process-studio-types": "workspace:*",
+    "@irn/framework-process-studio-client": "workspace:*",
+    "@irn/framework-process-studio-types": "workspace:*",
     "@tanstack/react-query": "^5.0.0",
     "@tailwindcss/postcss": "^4.1.11",
     "next": "^15.4.5",
