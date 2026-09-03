@@ -1,5 +1,7 @@
 import { createProjectFunctions } from '../functions/project';
 import { createProcessDefinitionFunctions } from '../functions/process-definition';
+import { createM2mKeyFunctions } from '../functions/m2m-key';
+import { createParameterizationFunctions } from '../functions/parameterization';
 import {
   ProcessStudioClient,
   ProcessStudioClientConfig,
@@ -14,6 +16,8 @@ export function createProcessStudioClient(config: ProcessStudioClientConfig): Pr
   });
   const projectFunctions = createProjectFunctions(apiClient);
   const processDefinitionFunctions = createProcessDefinitionFunctions(apiClient);
+  const parameterizationFunctions = createParameterizationFunctions(apiClient);
+  const m2mKeyFunctions = createM2mKeyFunctions(apiClient);
 
   return {
     projects: {
@@ -22,28 +26,30 @@ export function createProcessStudioClient(config: ProcessStudioClientConfig): Pr
       create: projectFunctions.createProject,
       update: projectFunctions.updateProject,
       createOrUpdate: projectFunctions.createOrUpdateProject,
-      delete: projectFunctions.deleteProject,
+      enable: projectFunctions.enableProject,
+      disable: projectFunctions.disableProject,
+      getHistory: projectFunctions.getProcessHistoryByProjectId,
+      getDeployed: projectFunctions.getDeployedProcessByProjectId,
     },
     processDefinitions: {
       getAll: async () => {
         const projects = await projectFunctions.getProject();
-        return projects.content.flatMap((project) =>
-          project.processDefinitions.map((pd) => ({
-            ...pd,
-            version: pd.version || 'N/D',
-          })),
-        );
+        return (projects.content ?? []).flatMap((project) => project.processDefinitions ?? []);
       },
       list: processDefinitionFunctions.getProcessDefinitions,
       getById: processDefinitionFunctions.getProcessDefinitionById,
       delete: processDefinitionFunctions.deleteProcessDefinition,
+      restore: processDefinitionFunctions.restoreProcessDefinition,
       create: processDefinitionFunctions.createProcessDefinition,
       update: processDefinitionFunctions.updateProcessDefinition,
       createOrUpdate: processDefinitionFunctions.createOrUpdateProcessDefinition,
       saveDiagram: processDefinitionFunctions.saveDiagramProcessDefinition,
       deploy: processDefinitionFunctions.deployProcessDefinition,
-      createOrUpdateVariable: processDefinitionFunctions.createOrUpdateVariable,
+      addVariables: processDefinitionFunctions.addVariablesToProcess,
+      createOrUpdateVariable: processDefinitionFunctions.addVariablesToProcess,
       getVariables: processDefinitionFunctions.getVariables,
     },
+    parameterization: parameterizationFunctions,
+    m2mKeys: m2mKeyFunctions,
   };
 }

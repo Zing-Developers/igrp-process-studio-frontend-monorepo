@@ -1,34 +1,45 @@
-import type { Project, PaginatedResponse } from '@irn/framework-process-studio-types';
+import type {
+  ProjectFilter,
+  ProjectProcessFilter,
+  ProjectRequestDTO,
+  ProjectResponseDTO,
+  WrapperListaProjectDTO,
+} from '@irn/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
-export const createProjectFunctions = (apiClient: ProcessStudioApiClient) => {
-  return {
-    getProject: async (): Promise<PaginatedResponse<Project>> => {
-      return apiClient.getProjects();
-    },
+export const createProjectFunctions = (apiClient: ProcessStudioApiClient) => ({
+  getProject: (filter?: ProjectFilter): Promise<WrapperListaProjectDTO> =>
+    apiClient.getProjects(filter),
 
-    getProjectById: async (code: string): Promise<Project> => {
-      return apiClient.getProjectById(code);
-    },
+  getProjectById: (projectId: string): Promise<ProjectResponseDTO> =>
+    apiClient.getProjectById(projectId),
 
-    createOrUpdateProject: async (project: Project): Promise<Project> => {
-      if (project.projectId) {
-        return apiClient.updateProject(project);
-      } else {
-        return apiClient.createProject(project);
-      }
-    },
+  createProject: (project: ProjectRequestDTO): Promise<ProjectResponseDTO> =>
+    apiClient.createProject(project),
 
-    createProject: async (project: Project): Promise<Project> => {
-      return apiClient.createProject(project);
-    },
+  updateProject: (projectId: string, project: ProjectRequestDTO): Promise<ProjectResponseDTO> =>
+    apiClient.updateProject(projectId, project),
 
-    updateProject: async (project: Project): Promise<Project> => {
-      return apiClient.updateProject(project);
-    },
+  createOrUpdateProject: (
+    project: ProjectRequestDTO & { projectId?: string },
+  ): Promise<ProjectResponseDTO> => {
+    const { projectId, ...request } = project;
+    return projectId
+      ? apiClient.updateProject(projectId, request)
+      : apiClient.createProject(request);
+  },
 
-    deleteProject: async (code: string): Promise<any> => {
-      return apiClient.deleteProject(code);
-    },
-  };
-};
+  enableProject: (projectId: string): Promise<string> => apiClient.enableProject(projectId),
+
+  disableProject: (projectId: string): Promise<string> => apiClient.disableProject(projectId),
+
+  getProcessHistoryByProjectId: (
+    projectId: string,
+    filter?: ProjectProcessFilter,
+  ): Promise<ProjectResponseDTO> => apiClient.getProcessHistoryByProjectId(projectId, filter),
+
+  getDeployedProcessByProjectId: (
+    projectId: string,
+    filter?: ProjectProcessFilter,
+  ): Promise<ProjectResponseDTO> => apiClient.getDeployedProcessByProjectId(projectId, filter),
+});

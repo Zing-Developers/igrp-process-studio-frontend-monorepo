@@ -31,10 +31,6 @@ export class BaseApiClient {
     };
 
     try {
-      console.log({
-        url,
-        requestOptions,
-      });
       const response = await fetch(url, requestOptions);
       clearTimeout(timeoutId);
 
@@ -64,7 +60,7 @@ export class BaseApiClient {
     }
   }
 
-  protected async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  protected async get<T>(endpoint: string, params?: object): Promise<ApiResponse<T>> {
     const url = params ? `${endpoint}?${this.buildQueryString(params)}` : endpoint;
     return this.request<T>(url, { method: 'GET' });
   }
@@ -72,44 +68,36 @@ export class BaseApiClient {
   protected async patch<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  protected async post<T>(
-    endpoint: string,
-    body?: any,
-    params?: {
-      params: undefined;
-      headers?: Record<string, string>;
-    },
-  ): Promise<ApiResponse<T>> {
+  protected async post<T>(endpoint: string, body?: any, params?: object): Promise<ApiResponse<T>> {
     const url = params ? `${endpoint}?${this.buildQueryString(params)}` : endpoint;
     return this.request<T>(url, {
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
-      headers: params?.headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
   protected async put<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
   protected async delete<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'DELETE',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
   private async parseResponse<T>(response: Response): Promise<T> {
     const contentType = response.headers.get('content-type');
 
-    if (contentType && contentType.includes('application/json')) {
+    if (contentType && contentType.includes('json')) {
       return (await response.json()) as T;
     }
 
@@ -123,7 +111,7 @@ export class BaseApiClient {
 
     try {
       const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType && contentType.includes('json')) {
         errorDetails = await response.json();
       } else {
         errorDetails = await response.text();
@@ -139,7 +127,7 @@ export class BaseApiClient {
     });
   }
 
-  private buildQueryString(params: Record<string, any>): string {
+  private buildQueryString(params: object): string {
     const searchParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {

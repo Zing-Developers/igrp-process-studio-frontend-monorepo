@@ -1,10 +1,20 @@
 import type {
-  Project,
-  ProcessDefinition,
-  PaginatedResponse,
-  ProcessDefinitionContent,
+  BpmDiagramDTO,
+  CreateRequest,
+  CreatedResponse,
+  EnumItemString,
+  KeySummary,
+  ProcessDefinitionRequestDTO,
+  ProcessDefinitionResponseDTO,
   ProcessDefinitionFilter,
-  VariableDefinition,
+  ProcessVariableRequestDTO,
+  ProcessVariableResponseDTO,
+  ProjectFilter,
+  ProjectProcessFilter,
+  ProjectRequestDTO,
+  ProjectResponseDTO,
+  WrapperListaProcessDefinitionDTO,
+  WrapperListaProjectDTO,
 } from './index';
 
 export interface ProcessStudioClientConfig {
@@ -16,30 +26,61 @@ export interface ProcessStudioClientConfig {
 
 export interface ProcessStudioClient {
   projects: {
-    getAll: () => Promise<PaginatedResponse<Project>>;
-    getById: (id: string) => Promise<Project>;
-    create: (project: Project) => Promise<Project>;
-    update: (project: Project) => Promise<Project>;
-    createOrUpdate: (project: Project) => Promise<Project>;
-    delete: (code: string) => Promise<any>;
+    getAll: (filter?: ProjectFilter) => Promise<WrapperListaProjectDTO>;
+    getById: (projectId: string) => Promise<ProjectResponseDTO>;
+    create: (project: ProjectRequestDTO) => Promise<ProjectResponseDTO>;
+    update: (projectId: string, project: ProjectRequestDTO) => Promise<ProjectResponseDTO>;
+    createOrUpdate: (
+      project: ProjectRequestDTO & { projectId?: string },
+    ) => Promise<ProjectResponseDTO>;
+    enable: (projectId: string) => Promise<string>;
+    disable: (projectId: string) => Promise<string>;
+    getHistory: (projectId: string, filter?: ProjectProcessFilter) => Promise<ProjectResponseDTO>;
+    getDeployed: (projectId: string, filter?: ProjectProcessFilter) => Promise<ProjectResponseDTO>;
   };
   processDefinitions: {
-    getAll: () => Promise<ProcessDefinition[]>;
-    list: (filter?: ProcessDefinitionFilter) => Promise<PaginatedResponse<ProcessDefinition>>;
-    getById: (id: string) => Promise<ProcessDefinition>;
-    delete: (id: string) => Promise<any>;
-    create: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
-    update: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
-    createOrUpdate: (processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
+    getAll: () => Promise<ProcessDefinitionResponseDTO[]>;
+    list: (filter?: ProcessDefinitionFilter) => Promise<WrapperListaProcessDefinitionDTO>;
+    getById: (processId: string) => Promise<ProcessDefinitionResponseDTO>;
+    delete: (processId: string) => Promise<string>;
+    restore: (processId: string) => Promise<string>;
+    create: (
+      projectId: string,
+      processDefinition: ProcessDefinitionRequestDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
+    update: (
+      processId: string,
+      processDefinition: ProcessDefinitionRequestDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
+    createOrUpdate: (
+      processDefinition: ProcessDefinitionRequestDTO & { processDefinitionId?: string },
+    ) => Promise<ProcessDefinitionResponseDTO>;
     saveDiagram: (
-      processkey: string,
-      processDefinition: ProcessDefinitionContent,
-    ) => Promise<Response>;
-    deploy: (processkey: string, processDefinition: ProcessDefinitionContent) => Promise<Response>;
+      processKey: string,
+      processDefinition: BpmDiagramDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
+    deploy: (
+      processKey: string,
+      processDefinition: BpmDiagramDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
+    addVariables: (
+      processId: string,
+      variables: ProcessVariableRequestDTO[],
+    ) => Promise<ProcessVariableResponseDTO>;
+    /** @deprecated Use addVariables. */
     createOrUpdateVariable: (
-      processDefinitionId: string,
-      variable: VariableDefinition[],
-    ) => Promise<VariableDefinition[]>;
-    getVariables: (processDefinitionId: string) => Promise<VariableDefinition[]>;
+      processId: string,
+      variables: ProcessVariableRequestDTO[],
+    ) => Promise<ProcessVariableResponseDTO>;
+    getVariables: (processId: string) => Promise<ProcessVariableResponseDTO>;
+  };
+  parameterization: {
+    getProcessDefinitionState: () => Promise<EnumItemString[]>;
+  };
+  m2mKeys: {
+    list: () => Promise<KeySummary[]>;
+    create: (request: CreateRequest) => Promise<CreatedResponse>;
+    rotate: (id: string) => Promise<CreatedResponse>;
+    revoke: (id: string) => Promise<void>;
   };
 }

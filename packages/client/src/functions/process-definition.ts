@@ -1,75 +1,70 @@
 import type {
-  PaginatedResponse,
-  ProcessDefinition,
+  BpmDiagramDTO,
   ProcessDefinitionFilter,
-  VariableDefinition,
+  ProcessDefinitionRequestDTO,
+  ProcessDefinitionResponseDTO,
+  ProcessVariableRequestDTO,
+  ProcessVariableResponseDTO,
+  WrapperListaProcessDefinitionDTO,
 } from '@irn/framework-process-studio-types';
-import { ProcessDefinitionContent } from '@irn/framework-process-studio-types';
 import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
 
-export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClient) => {
-  return {
-    getProcessDefinitions: async (
-      filter?: ProcessDefinitionFilter,
-    ): Promise<PaginatedResponse<ProcessDefinition>> => {
-      return apiClient.getProcessDefinitions(filter);
-    },
+export const createProcessDefinitionFunctions = (apiClient: ProcessStudioApiClient) => ({
+  getProcessDefinitions: (
+    filter?: ProcessDefinitionFilter,
+  ): Promise<WrapperListaProcessDefinitionDTO> => apiClient.getProcessDefinitions(filter),
 
-    getProcessDefinitionById: async (processDefinitionId: string): Promise<ProcessDefinition> => {
-      return apiClient.getProcessDefinitionById(processDefinitionId);
-    },
+  getProcessDefinitionById: (processId: string): Promise<ProcessDefinitionResponseDTO> =>
+    apiClient.getProcessDefinitionById(processId),
 
-    deleteProcessDefinition: async (processDefinitionId: string): Promise<any> => {
-      return apiClient.deleteProcessDefinition(processDefinitionId);
-    },
+  deleteProcessDefinition: (processId: string): Promise<string> =>
+    apiClient.deleteProcessDefinition(processId),
 
-    createProcessDefinition: async (
-      projectId: string,
-      processDefinition: ProcessDefinition,
-    ): Promise<ProcessDefinition> => {
-      return apiClient.createProcessDefinition(projectId, processDefinition);
-    },
+  restoreProcessDefinition: (processId: string): Promise<string> =>
+    apiClient.restoreProcessDefinition(processId),
 
-    updateProcessDefinition: async (
-      projectId: string,
-      processDefinition: ProcessDefinition,
-    ): Promise<ProcessDefinition> => {
-      return apiClient.updateProcessDefinition(projectId, processDefinition);
-    },
+  createProcessDefinition: (
+    projectId: string,
+    processDefinition: ProcessDefinitionRequestDTO,
+  ): Promise<ProcessDefinitionResponseDTO> =>
+    apiClient.createProcessDefinition(projectId, processDefinition),
 
-    createOrUpdateProcessDefinition: async (
-      processDefinition: ProcessDefinition,
-    ): Promise<ProcessDefinition> => {
-      if (processDefinition.processDefinitionId) {
-        return apiClient.updateProcessDefinition(processDefinition.projectId, processDefinition);
-      } else {
-        return apiClient.createProcessDefinition(processDefinition.projectId, processDefinition);
-      }
-    },
+  updateProcessDefinition: (
+    processId: string,
+    processDefinition: ProcessDefinitionRequestDTO,
+  ): Promise<ProcessDefinitionResponseDTO> =>
+    apiClient.updateProcessDefinition(processId, processDefinition),
 
-    saveDiagramProcessDefinition: async (
-      processkey: string,
-      processDefinition: ProcessDefinitionContent,
-    ): Promise<any> => {
-      return apiClient.saveDiagramProcessDefinition(processkey, processDefinition);
-    },
+  createOrUpdateProcessDefinition: (
+    processDefinition: ProcessDefinitionRequestDTO & { processDefinitionId?: string },
+  ): Promise<ProcessDefinitionResponseDTO> => {
+    const { processDefinitionId, ...request } = processDefinition;
+    if (processDefinitionId) {
+      return apiClient.updateProcessDefinition(processDefinitionId, request);
+    }
+    if (!request.projectId) {
+      throw new TypeError('projectId is required to create a process definition');
+    }
+    return apiClient.createProcessDefinition(request.projectId, request);
+  },
 
-    deployProcessDefinition: async (
-      processkey: string,
-      processDefinition: ProcessDefinitionContent,
-    ): Promise<any> => {
-      return apiClient.deployProcessDefinition(processkey, processDefinition);
-    },
+  saveDiagramProcessDefinition: (
+    processKey: string,
+    processDefinition: BpmDiagramDTO,
+  ): Promise<ProcessDefinitionResponseDTO> =>
+    apiClient.saveDiagramProcessDefinition(processKey, processDefinition),
 
-    createOrUpdateVariable: async (
-      processDefinitionId: string,
-      variable: VariableDefinition[],
-    ): Promise<VariableDefinition[]> => {
-      return apiClient.createOrUpdateVariable(processDefinitionId, variable);
-    },
+  deployProcessDefinition: (
+    processKey: string,
+    processDefinition: BpmDiagramDTO,
+  ): Promise<ProcessDefinitionResponseDTO> =>
+    apiClient.deployProcessDefinition(processKey, processDefinition),
 
-    getVariables: async (processDefinitionId: string): Promise<VariableDefinition[]> => {
-      return apiClient.getVariables(processDefinitionId);
-    },
-  };
-};
+  addVariablesToProcess: (
+    processId: string,
+    variables: ProcessVariableRequestDTO[],
+  ): Promise<ProcessVariableResponseDTO> => apiClient.addVariablesToProcess(processId, variables),
+
+  getVariables: (processId: string): Promise<ProcessVariableResponseDTO> =>
+    apiClient.getVariables(processId),
+});

@@ -77,10 +77,10 @@ export const decorateProcessDefinitionRow = (pd: ProcessDefinition): ProcessDefi
     ...pd,
     version: pd?.version != null ? String(pd.version) : 'N/D',
     deploymentDate: formatDeploymentDate(pd?.deploymentDate),
-    createdByNameTbl: pd?.createdBy?.fullName ?? '',
-    createdDateTbl: pd?.createdDate ?? '',
-    lastModifiedByNameTbl: pd?.lastModifiedBy?.fullName ?? '',
-    lastModifiedDateTbl: pd?.lastModifiedDate ?? '',
+    createdByNameTbl: pd?.userProfileCreatedBy?.fullName ?? '',
+    createdDateTbl: '',
+    lastModifiedByNameTbl: pd?.userProfileLastModifiedBy?.fullName ?? '',
+    lastModifiedDateTbl: '',
   };
 };
 
