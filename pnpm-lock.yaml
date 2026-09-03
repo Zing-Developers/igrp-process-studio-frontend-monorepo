@@ -205,8 +205,8 @@ importers:
   packages/client:
     dependencies:
       '@irn/framework-process-studio-types':
-        specifier: 0.0.1-beta.18
-        version: 0.0.1-beta.18
+        specifier: 0.0.1-beta.19
+        version: 0.0.1-beta.19
     devDependencies:
       '@types/node':
         specifier: ^24.1.0
@@ -1219,8 +1219,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@irn/framework-process-studio-types@0.0.1-beta.18':
-    resolution: {integrity: sha512-CD+10459vPxC/gOXbFO7pc4+lhtGAyMU/jkC3zhOl0qOWcXm6pC93CC91lYCNKYQkIiFx/tp/3SYRQ1KjOZhsQ==}
+  '@irn/framework-process-studio-types@0.0.1-beta.19':
+    resolution: {integrity: sha512-iEOb4JaPGXzo3743A2OJ7ffddhZ83NzIoSK14ykW/svW7hxhcdQXO13PUQ0xDAw/94IIPPWCscQ3wRajdAw7CA==}
     engines: {node: '>=20.x.x'}
 
   '@isaacs/balanced-match@4.0.1':
@@ -6967,7 +6967,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.3':
     optional: true
 
-  '@irn/framework-process-studio-types@0.0.1-beta.18': {}
+  '@irn/framework-process-studio-types@0.0.1-beta.19': {}
 
   '@isaacs/balanced-match@4.0.1': {}
 
