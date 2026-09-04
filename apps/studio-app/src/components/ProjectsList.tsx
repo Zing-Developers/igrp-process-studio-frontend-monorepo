@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useProjects } from '@/hooks/useProjects';
-import type { Project } from '@igrp/framework-process-studio-types';
+import type { Project } from '@irn/framework-process-studio-types';
 
 export function ProjectsList() {
   const { projects, loading, error, createProject, updateProject, deleteProject } = useProjects();

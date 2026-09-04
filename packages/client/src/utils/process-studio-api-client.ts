@@ -16,8 +16,10 @@ import type {
   WrapperListaProcessDefinitionDTO,
   WrapperListaProjectDTO,
 } from '@irn/framework-process-studio-types';
-import { BaseApiClient } from './base-api-client';
-import type { ApiClientConfig } from './types';
+import { BaseApiClient } from './base-api-client.js';
+import type { ApiClientConfig } from './types.js';
+
+const encodePathSegment = (value: string): string => encodeURIComponent(value);
 
 export class ProcessStudioApiClient extends BaseApiClient {
   constructor(config: ApiClientConfig) {
@@ -30,7 +32,9 @@ export class ProcessStudioApiClient extends BaseApiClient {
   }
 
   async getProjectById(projectId: string): Promise<ProjectResponseDTO> {
-    const response = await this.get<ProjectResponseDTO>(`/api/v1/projects/${projectId}`);
+    const response = await this.get<ProjectResponseDTO>(
+      `/api/v1/projects/${encodePathSegment(projectId)}`,
+    );
     return response.data;
   }
 
@@ -40,17 +44,24 @@ export class ProcessStudioApiClient extends BaseApiClient {
   }
 
   async updateProject(projectId: string, project: ProjectRequestDTO): Promise<ProjectResponseDTO> {
-    const response = await this.put<ProjectResponseDTO>(`/api/v1/projects/${projectId}`, project);
+    const response = await this.put<ProjectResponseDTO>(
+      `/api/v1/projects/${encodePathSegment(projectId)}`,
+      project,
+    );
     return response.data;
   }
 
   async enableProject(projectId: string): Promise<string> {
-    const response = await this.patch<string>(`/api/v1/projects/${projectId}/enable`);
+    const response = await this.patch<string>(
+      `/api/v1/projects/${encodePathSegment(projectId)}/enable`,
+    );
     return response.data;
   }
 
   async disableProject(projectId: string): Promise<string> {
-    const response = await this.patch<string>(`/api/v1/projects/${projectId}/disable`);
+    const response = await this.patch<string>(
+      `/api/v1/projects/${encodePathSegment(projectId)}/disable`,
+    );
     return response.data;
   }
 
@@ -59,7 +70,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     filter?: ProjectProcessFilter,
   ): Promise<ProjectResponseDTO> {
     const response = await this.get<ProjectResponseDTO>(
-      `/api/v1/projects/${projectId}/history-process`,
+      `/api/v1/projects/${encodePathSegment(projectId)}/history-process`,
       filter,
     );
     return response.data;
@@ -70,7 +81,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     filter?: ProjectProcessFilter,
   ): Promise<ProjectResponseDTO> {
     const response = await this.get<ProjectResponseDTO>(
-      `/api/v1/projects/${projectId}/deployed-process`,
+      `/api/v1/projects/${encodePathSegment(projectId)}/deployed-process`,
       filter,
     );
     return response.data;
@@ -88,7 +99,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
 
   async getProcessDefinitionById(processId: string): Promise<ProcessDefinitionResponseDTO> {
     const response = await this.get<ProcessDefinitionResponseDTO>(
-      `/api/v1/projects/process-definitions/${processId}`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processId)}`,
     );
     return response.data;
   }
@@ -98,7 +109,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     processDefinition: ProcessDefinitionRequestDTO,
   ): Promise<ProcessDefinitionResponseDTO> {
     const response = await this.post<ProcessDefinitionResponseDTO>(
-      `/api/v1/projects/${projectId}/process-definitions`,
+      `/api/v1/projects/${encodePathSegment(projectId)}/process-definitions`,
       processDefinition,
     );
     return response.data;
@@ -109,7 +120,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     processDefinition: ProcessDefinitionRequestDTO,
   ): Promise<ProcessDefinitionResponseDTO> {
     const response = await this.put<ProcessDefinitionResponseDTO>(
-      `/api/v1/projects/process-definitions/${processId}`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processId)}`,
       processDefinition,
     );
     return response.data;
@@ -120,7 +131,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     processDefinition: BpmDiagramDTO,
   ): Promise<ProcessDefinitionResponseDTO> {
     const response = await this.put<ProcessDefinitionResponseDTO>(
-      `/api/v1/projects/process-definitions/${processKey}/diagram`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processKey)}/diagram`,
       processDefinition,
     );
     return response.data;
@@ -131,7 +142,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     processDefinition: BpmDiagramDTO,
   ): Promise<ProcessDefinitionResponseDTO> {
     const response = await this.post<ProcessDefinitionResponseDTO>(
-      `/api/v1/projects/process-definitions/${processKey}/deploy`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processKey)}/deploy`,
       processDefinition,
     );
     return response.data;
@@ -142,7 +153,7 @@ export class ProcessStudioApiClient extends BaseApiClient {
     variables: ProcessVariableRequestDTO[],
   ): Promise<ProcessVariableResponseDTO> {
     const response = await this.post<ProcessVariableResponseDTO>(
-      `/api/v1/projects/process-definitions/${processId}/variables`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processId)}/variables`,
       variables,
     );
     return response.data;
@@ -158,21 +169,21 @@ export class ProcessStudioApiClient extends BaseApiClient {
 
   async getVariables(processId: string): Promise<ProcessVariableResponseDTO> {
     const response = await this.get<ProcessVariableResponseDTO>(
-      `/api/v1/projects/process-definitions/${processId}/variables`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processId)}/variables`,
     );
     return response.data;
   }
 
   async deleteProcessDefinition(processId: string): Promise<string> {
     const response = await this.patch<string>(
-      `/api/v1/projects/process-definitions/${processId}/delete`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processId)}/delete`,
     );
     return response.data;
   }
 
   async restoreProcessDefinition(processId: string): Promise<string> {
     const response = await this.patch<string>(
-      `/api/v1/projects/process-definitions/${processId}/restore`,
+      `/api/v1/projects/process-definitions/${encodePathSegment(processId)}/restore`,
     );
     return response.data;
   }
@@ -193,11 +204,11 @@ export class ProcessStudioApiClient extends BaseApiClient {
   }
 
   async rotateM2mKey(id: string): Promise<CreatedResponse> {
-    const response = await this.post<CreatedResponse>(`/m2m-keys/${id}/rotate`);
+    const response = await this.post<CreatedResponse>(`/m2m-keys/${encodePathSegment(id)}/rotate`);
     return response.data;
   }
 
   async revokeM2mKey(id: string): Promise<void> {
-    await this.delete(`/m2m-keys/${id}`);
+    await this.delete(`/m2m-keys/${encodePathSegment(id)}`);
   }
 }

@@ -5,7 +5,7 @@ Cliente reutilizável para integração com o IGRP Process Studio.
 ## Instalação
 
 ```bash
-npm install @igrp/framework-process-studio-core @igrp/framework-process-studio-types
+npm install @irn/framework-process-studio-client @irn/framework-process-studio-types
 ```
 
 ## Arquitetura
@@ -24,7 +24,7 @@ Este pacote oferece uma abordagem **cliente puro** que chama diretamente o API G
 ### Configuração
 
 ```typescript
-import { createProcessStudioClient } from '@igrp/framework-process-studio-core';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
 
 const client = createProcessStudioClient({
   baseUrl: 'https://api.igrp-studio.com',
@@ -49,7 +49,7 @@ O cliente não inclui hooks prontos, mas você pode implementá-los facilmente n
 ```typescript
 // hooks/useProcessStudio.ts
 import { useQuery, useMemo } from '@tanstack/react-query';
-import { createProcessStudioClient } from '@igrp/framework-process-studio-core';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
 
 const client = createProcessStudioClient({
   baseUrl: 'https://api.igrp-studio.com',
@@ -156,7 +156,7 @@ function YourApp() {
 ### Usar diretamente (sem React Query)
 
 ```typescript
-import { createProcessStudioClient } from '@igrp/framework-process-studio-core';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
 
 const client = createProcessStudioClient({
   baseUrl: 'https://api.igrp-studio.com',
@@ -190,7 +190,8 @@ const newProcessDefinition = await client.processDefinitions.create('project-id'
 
 ```typescript
 interface ProcessStudioClientConfig {
-  baseUrl: string;
+  baseUrl?: string;
+  // Sent as Authorization: Bearer <apiKey>.
   apiKey?: string;
   timeout?: number;
   headers?: Record<string, string>;
@@ -203,22 +204,29 @@ interface ProcessStudioClientConfig {
 client.projects.getAll(); // Listar todos os projetos
 client.projects.getById(id); // Obter projeto por ID
 client.projects.create(project); // Criar projeto
-client.projects.update(project); // Atualizar projeto
+client.projects.update(projectId, project); // Atualizar projeto
 client.projects.createOrUpdate(project); // Criar ou atualizar
-client.projects.delete(code); // Deletar projeto
+client.projects.enable(projectId); // Ativar projeto
+client.projects.disable(projectId); // Desativar projeto
+client.projects.getHistory(projectId, filter); // Histórico de processos
+client.projects.getDeployed(projectId, filter); // Processos implantados
 ```
 
 ### Process Definitions API
 
 ```typescript
 client.processDefinitions.getAll(); // Listar todas as definições
+client.processDefinitions.list(filter); // Lista paginada e filtrada
 client.processDefinitions.getById(id); // Obter definição por ID
-client.processDefinitions.getByProjectId(projectId); // Listar por projeto
 client.processDefinitions.create(projectId, definition); // Criar definição
-client.processDefinitions.update(projectId, definition); // Atualizar definição
+client.processDefinitions.update(processId, definition); // Atualizar definição
 client.processDefinitions.createOrUpdate(definition); // Criar ou atualizar
-client.processDefinitions.saveDiagram(id, definition); // Salvar diagrama
-client.processDefinitions.deploy(id, definition); // Deploy da definição
+client.processDefinitions.delete(processId); // Exclusão lógica
+client.processDefinitions.restore(processId); // Restaurar definição
+client.processDefinitions.saveDiagram(processKey, { content }); // Salvar diagrama
+client.processDefinitions.deploy(processKey, { content }); // Deploy da definição
+client.processDefinitions.addVariables(processId, variables); // Salvar variáveis
+client.processDefinitions.getVariables(processId); // Obter variáveis
 ```
 
 ### Hooks (implementar no seu projeto)
@@ -234,46 +242,23 @@ useProjectConfiguration(); // Hook para configuração
 ## Tipos
 
 ```typescript
-interface Project {
-  code: string;
-  name: string;
-  description: string;
-  projectId: string;
-  processDefinitions: ProcessDefinition[];
-}
-
-interface ProcessDefinition {
-  title: string;
-  description: string;
-  projectId: string;
-  status: string;
-  processDefinitionId: string;
-  version: string;
-  statusDesc: string;
-}
-
-interface PaginatedResponse<T> {
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  last: boolean;
-  first: boolean;
-  content: T[];
-}
+import type {
+  ProjectRequestDTO,
+  ProjectResponseDTO,
+  ProcessDefinitionRequestDTO,
+  ProcessDefinitionResponseDTO,
+  PaginatedResponse,
+} from '@irn/framework-process-studio-types';
 ```
 
 ## Estrutura do Pacote
 
 ```
-packages/core/
+packages/client/
 ├── src/
-│   ├── client/           # Cliente HTTP centralizado
-│   │   ├── client.ts     # Cliente principal
-│   │   └── types.ts      # Tipos do cliente
+│   ├── services/         # Cliente público
+│   ├── utils/            # Transporte HTTP
 │   ├── functions/        # Funções de negócio
-│   │   ├── project.ts
-│   │   └── process-definition.ts
 │   └── index.ts         # Exportações principais
 ```
 
@@ -282,15 +267,16 @@ packages/core/
 ### Projects
 
 - `GET /api/v1/projects` - Listar projetos
-- `GET /api/v1/projects/{code}` - Obter projeto por código
+- `GET /api/v1/projects/{projectId}` - Obter projeto por ID
 - `POST /api/v1/projects` - Criar projeto
-- `PUT /api/v1/projects` - Atualizar projeto
-- `DELETE /api/v1/projects/{code}` - Deletar projeto
+- `PUT /api/v1/projects/{projectId}` - Atualizar projeto
+- `PATCH /api/v1/projects/{projectId}/enable` - Ativar projeto
+- `PATCH /api/v1/projects/{projectId}/disable` - Desativar projeto
 
 ### Process Definitions
 
-- `GET /api/v1/projects/process/{processDefinitionId}` - Obter definição por ID
-- `POST /api/v1/projects/process?projectId={projectId}` - Criar definição
-- `PUT /api/v1/projects/process/{projectId}` - Atualizar definição
-- `PUT /api/v1/projects/process/{processDefinitionId}/diagram` - Salvar diagrama
-- `POST /api/v1/projects/process/{processDefinitionId}/deploy` - Deploy da definição
+- `GET /api/v1/projects/process-definitions/{processId}` - Obter definição por ID
+- `POST /api/v1/projects/{projectId}/process-definitions` - Criar definição
+- `PUT /api/v1/projects/process-definitions/{processId}` - Atualizar definição
+- `PUT /api/v1/projects/process-definitions/{processKey}/diagram` - Salvar diagrama
+- `POST /api/v1/projects/process-definitions/{processKey}/deploy` - Deploy da definição

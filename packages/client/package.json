@@ -15,18 +15,27 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "tsc --watch",
     "build": "rimraf dist && rimraf tsconfig.tsbuildinfo && pnpm format && tsc -b",
+    "test": "tsc -b && node --test tests/*.test.mjs",
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "format": "prettier --write .",
     "release": "pnpm build && pnpm publish --registry=https://nexus-1.zingaistudio.com/repository/npm-repo/ --tag latest"
   },
   "dependencies": {
-    "@irn/framework-process-studio-types": "0.0.1-beta.19"
+    "@irn/framework-process-studio-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

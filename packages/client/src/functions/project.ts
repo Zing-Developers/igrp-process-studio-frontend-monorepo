@@ -5,7 +5,7 @@ import type {
   ProjectResponseDTO,
   WrapperListaProjectDTO,
 } from '@irn/framework-process-studio-types';
-import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
+import { ProcessStudioApiClient } from '../utils/process-studio-api-client.js';
 
 export const createProjectFunctions = (apiClient: ProcessStudioApiClient) => ({
   getProject: (filter?: ProjectFilter): Promise<WrapperListaProjectDTO> =>

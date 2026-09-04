@@ -8,10 +8,19 @@ export interface UserProfileDTO {
   sub?: string;
 }
 
+export interface AuditMetadata {
+  createdBy?: string;
+  lastModifiedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  userProfileCreatedBy?: UserProfileDTO;
+  userProfileLastModifiedBy?: UserProfileDTO;
+}
+
 /** @deprecated Use UserProfileDTO. */
 export type AuditUser = UserProfileDTO;
 
-export interface ArtifactVariableResponseDTO {
+export interface ArtifactVariableResponseDTO extends AuditMetadata {
   artifactVariableId?: string;
   key?: string;
   name?: string;
@@ -20,7 +29,7 @@ export interface ArtifactVariableResponseDTO {
   required?: boolean;
 }
 
-export interface ProcessArtifactResponseDTO {
+export interface ProcessArtifactResponseDTO extends AuditMetadata {
   projectArtifactId?: string;
   taskKey?: string;
   name?: string;
@@ -49,9 +58,18 @@ export interface ProcessDefinitionRequestDTO {
   status?: ProcessDefinitionStatus;
 }
 
-export interface ProcessDefinitionResponseLightDTO {
+export interface ProjectSummaryDTO {
+  projectId?: string;
+  code?: string;
+  name?: string;
+  appCode?: string;
+  active?: boolean;
+}
+
+export interface ProcessDefinitionResponseLightDTO extends AuditMetadata {
   processDefinitionId?: string;
   projectId?: string;
+  project?: ProjectSummaryDTO;
   processKey?: string;
   bpmnDiagramUrl?: string;
   title?: string;
@@ -61,10 +79,6 @@ export interface ProcessDefinitionResponseLightDTO {
   statusDesc?: string;
   deploymentId?: string;
   deploymentDate?: string;
-  createdBy?: string;
-  lastModifiedBy?: string;
-  userProfileCreatedBy?: UserProfileDTO;
-  userProfileLastModifiedBy?: UserProfileDTO;
 }
 
 export interface ProcessDefinitionResponseDTO extends ProcessDefinitionResponseLightDTO {
@@ -82,17 +96,13 @@ export interface ProjectRequestDTO {
   appCode?: string;
 }
 
-export interface ProjectResponseDTO {
+export interface ProjectResponseDTO extends AuditMetadata {
   projectId?: string;
   code?: string;
   name?: string;
   description?: string;
   active?: boolean;
   appCode?: string;
-  createdBy?: string;
-  lastModifiedBy?: string;
-  userProfileCreatedBy?: UserProfileDTO;
-  userProfileLastModifiedBy?: UserProfileDTO;
   processDefinitions?: ProcessDefinitionResponseDTO[];
 }
 
@@ -151,7 +161,7 @@ export interface ProcessVariableRequestDTO {
   required?: boolean;
 }
 
-export interface ProcessVariableResponseDTO extends ProcessVariableRequestDTO {
+export interface ProcessVariableResponseDTO extends ProcessVariableRequestDTO, AuditMetadata {
   processDefinitionId?: string;
 }
 
@@ -193,6 +203,9 @@ export interface KeySummary {
   revokedAt?: string;
   revokedBy?: string;
   userProfileRevokedBy?: UserProfileDTO;
+  updatedAt?: string;
+  updatedBy?: string;
+  userProfileUpdatedBy?: UserProfileDTO;
 }
 
-export * from './process-studio';
+export * from './process-studio.js';

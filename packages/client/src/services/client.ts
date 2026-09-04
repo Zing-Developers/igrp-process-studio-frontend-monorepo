@@ -1,18 +1,24 @@
-import { createProjectFunctions } from '../functions/project';
-import { createProcessDefinitionFunctions } from '../functions/process-definition';
-import { createM2mKeyFunctions } from '../functions/m2m-key';
-import { createParameterizationFunctions } from '../functions/parameterization';
-import {
+import { createProjectFunctions } from '../functions/project.js';
+import { createProcessDefinitionFunctions } from '../functions/process-definition.js';
+import { createM2mKeyFunctions } from '../functions/m2m-key.js';
+import { createParameterizationFunctions } from '../functions/parameterization.js';
+import type {
   ProcessStudioClient,
   ProcessStudioClientConfig,
 } from '@irn/framework-process-studio-types';
-import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
+import { ProcessStudioApiClient } from '../utils/process-studio-api-client.js';
+
+const getEnvironmentBaseUrl = (): string =>
+  typeof process !== 'undefined' ? (process.env.NEXT_PUBLIC_API_GATEWAY ?? '') : '';
 
 export function createProcessStudioClient(config: ProcessStudioClientConfig): ProcessStudioClient {
   const apiClient = new ProcessStudioApiClient({
-    baseUrl: config.baseUrl || process.env.NEXT_PUBLIC_API_GATEWAY || '',
-    timeout: config.timeout || 30000,
-    headers: config.headers || {},
+    baseUrl: config.baseUrl ?? getEnvironmentBaseUrl(),
+    timeout: config.timeout ?? 30000,
+    headers: {
+      ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
+      ...config.headers,
+    },
   });
   const projectFunctions = createProjectFunctions(apiClient);
   const processDefinitionFunctions = createProcessDefinitionFunctions(apiClient);

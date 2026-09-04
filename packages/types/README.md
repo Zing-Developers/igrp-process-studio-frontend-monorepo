@@ -5,7 +5,7 @@ Pacote de tipos compartilhados para o IGRP Process Studio.
 ## Instalação
 
 ```bash
-npm install @igrp/framework-process-studio-types
+npm install @irn/framework-process-studio-types
 ```
 
 ## Uso
@@ -17,7 +17,7 @@ import type {
   Project,
   ProcessDefinition,
   PaginatedResponse,
-} from '@igrp/framework-process-studio-types';
+} from '@irn/framework-process-studio-types';
 
 const project: Project = {
   code: 'PROJ001',
@@ -34,7 +34,7 @@ const project: Project = {
 import type {
   ProcessStudioClientConfig,
   ProcessStudioClient,
-} from '@igrp/framework-process-studio-types';
+} from '@irn/framework-process-studio-types';
 
 const config: ProcessStudioClientConfig = {
   baseUrl: 'https://api.igrp-studio.com',
@@ -44,43 +44,27 @@ const config: ProcessStudioClientConfig = {
 
 ## Tipos Disponíveis
 
-### Tipos Básicos
+### Tipos principais
 
 ```typescript
-interface Project {
-  code: string;
-  name: string;
-  description: string;
-  projectId: string;
-  processDefinitions: ProcessDefinition[];
-}
-
-interface ProcessDefinition {
-  title: string;
-  description: string;
-  projectId: string;
-  status: string;
-  processDefinitionId: string;
-  version: string;
-  statusDesc: string;
-}
-
-interface PaginatedResponse<T> {
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  last: boolean;
-  first: boolean;
-  content: T[];
-}
+import type {
+  AuditMetadata,
+  ProjectRequestDTO,
+  ProjectResponseDTO,
+  ProjectSummaryDTO,
+  ProcessDefinitionRequestDTO,
+  ProcessDefinitionResponseDTO,
+  ProcessDefinitionResponseLightDTO,
+  PaginatedResponse,
+} from '@irn/framework-process-studio-types';
 ```
 
 ### Tipos do Cliente
 
 ```typescript
 interface ProcessStudioClientConfig {
-  baseUrl: string;
+  baseUrl?: string;
+  // Sent as Authorization: Bearer <apiKey>.
   apiKey?: string;
   timeout?: number;
   headers?: Record<string, string>;
@@ -88,28 +72,29 @@ interface ProcessStudioClientConfig {
 
 interface ProcessStudioClient {
   projects: {
-    getAll: () => Promise<PaginatedResponse<Project>>;
-    getById: (id: string) => Promise<Project>;
-    create: (project: Project) => Promise<Project>;
-    update: (project: Project) => Promise<Project>;
-    createOrUpdate: (project: Project) => Promise<Project>;
-    delete: (code: string) => Promise<any>;
+    getAll: (filter?: ProjectFilter) => Promise<WrapperListaProjectDTO>;
+    getById: (projectId: string) => Promise<ProjectResponseDTO>;
+    create: (project: ProjectRequestDTO) => Promise<ProjectResponseDTO>;
+    update: (projectId: string, project: ProjectRequestDTO) => Promise<ProjectResponseDTO>;
+    enable: (projectId: string) => Promise<string>;
+    disable: (projectId: string) => Promise<string>;
   };
   processDefinitions: {
-    getAll: () => Promise<ProcessDefinition[]>;
-    getById: (id: string) => Promise<ProcessDefinition>;
-    getByProjectId: (projectId: string) => Promise<ProcessDefinition[]>;
-    create: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
-    update: (projectId: string, processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
-    createOrUpdate: (processDefinition: ProcessDefinition) => Promise<ProcessDefinition>;
+    list: (filter?: ProcessDefinitionFilter) => Promise<WrapperListaProcessDefinitionDTO>;
+    getById: (processId: string) => Promise<ProcessDefinitionResponseDTO>;
+    create: (
+      projectId: string,
+      definition: ProcessDefinitionRequestDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
+    update: (
+      processId: string,
+      definition: ProcessDefinitionRequestDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
     saveDiagram: (
-      processDefinitionId: string,
-      processDefinition: ProcessDefinition,
-    ) => Promise<Response>;
-    deploy: (
-      processDefinitionId: string,
-      processDefinition: ProcessDefinition,
-    ) => Promise<Response>;
+      processKey: string,
+      diagram: BpmDiagramDTO,
+    ) => Promise<ProcessDefinitionResponseDTO>;
+    deploy: (processKey: string, diagram: BpmDiagramDTO) => Promise<ProcessDefinitionResponseDTO>;
   };
 }
 ```

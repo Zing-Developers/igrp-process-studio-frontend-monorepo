@@ -15,10 +15,12 @@ import type {
   ProjectResponseDTO,
   WrapperListaProcessDefinitionDTO,
   WrapperListaProjectDTO,
-} from './index';
+} from './index.js';
 
 export interface ProcessStudioClientConfig {
-  baseUrl: string;
+  /** Defaults to NEXT_PUBLIC_API_GATEWAY when available. */
+  baseUrl?: string;
+  /** Sent as an Authorization bearer token unless that header is explicitly overridden. */
   apiKey?: string;
   timeout?: number;
   headers?: Record<string, string>;

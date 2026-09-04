@@ -3,7 +3,7 @@ import type {
   CreatedResponse,
   KeySummary,
 } from '@irn/framework-process-studio-types';
-import { ProcessStudioApiClient } from '../utils/process-studio-api-client';
+import { ProcessStudioApiClient } from '../utils/process-studio-api-client.js';
 
 export const createM2mKeyFunctions = (apiClient: ProcessStudioApiClient) => ({
   list: (): Promise<KeySummary[]> => apiClient.listM2mKeys(),

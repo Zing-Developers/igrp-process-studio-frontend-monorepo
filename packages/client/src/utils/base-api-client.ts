@@ -1,4 +1,4 @@
-import { ApiClientConfig, ApiResponse } from './types';
+import type { ApiClientConfig, ApiResponse } from './types.js';
 
 export class BaseApiClient {
   protected baseUrl: string;
@@ -7,10 +7,10 @@ export class BaseApiClient {
 
   constructor(config: ApiClientConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
-    this.timeout = config.timeout || 30000; // 30 seconds default
+    this.timeout = config.timeout ?? 30000; // 30 seconds default
     this.defaultHeaders = {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
+      Accept: 'application/json, application/hal+json',
       ...config.headers,
     };
   }
@@ -61,33 +61,39 @@ export class BaseApiClient {
   }
 
   protected async get<T>(endpoint: string, params?: object): Promise<ApiResponse<T>> {
-    const url = params ? `${endpoint}?${this.buildQueryString(params)}` : endpoint;
+    const query = params ? this.buildQueryString(params) : '';
+    const url = query ? `${endpoint}?${query}` : endpoint;
     return this.request<T>(url, { method: 'GET' });
   }
 
-  protected async patch<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  protected async patch<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  protected async post<T>(endpoint: string, body?: any, params?: object): Promise<ApiResponse<T>> {
-    const url = params ? `${endpoint}?${this.buildQueryString(params)}` : endpoint;
+  protected async post<T>(
+    endpoint: string,
+    body?: unknown,
+    params?: object,
+  ): Promise<ApiResponse<T>> {
+    const query = params ? this.buildQueryString(params) : '';
+    const url = query ? `${endpoint}?${query}` : endpoint;
     return this.request<T>(url, {
       method: 'POST',
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  protected async put<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  protected async put<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
-  protected async delete<T>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
+  protected async delete<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'DELETE',
       body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -95,24 +101,32 @@ export class BaseApiClient {
   }
 
   private async parseResponse<T>(response: Response): Promise<T> {
-    const contentType = response.headers.get('content-type');
-
-    if (contentType && contentType.includes('json')) {
-      return (await response.json()) as T;
+    if (response.status === 204) {
+      return undefined as T;
     }
 
-    // For non-JSON responses, return the text content
+    const contentType = response.headers.get('content-type');
     const text = await response.text();
+
+    if (!text) {
+      return undefined as T;
+    }
+
+    if (contentType && contentType.includes('json')) {
+      return JSON.parse(text) as T;
+    }
+
     return text as unknown as T;
   }
 
   private async handleErrorResponse(response: Response): Promise<never> {
-    let errorDetails: any;
+    let errorDetails: unknown;
 
     try {
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('json')) {
-        errorDetails = await response.json();
+        const text = await response.text();
+        errorDetails = text ? (JSON.parse(text) as unknown) : undefined;
       } else {
         errorDetails = await response.text();
       }
@@ -142,9 +156,9 @@ export class BaseApiClient {
 
 export class ApiClientError extends Error {
   public status: number;
-  public details?: any;
+  public details?: unknown;
 
-  constructor(params: { message: string; status: number; details?: any }) {
+  constructor(params: { message: string; status: number; details?: unknown }) {
     super(params.message);
     this.name = 'ApiClientError';
     this.status = params.status;

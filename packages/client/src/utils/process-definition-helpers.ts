@@ -2,7 +2,7 @@
  * Presentation-layer helpers for ProcessDefinition rows.
  *
  * Pure functions — no React, no hooks. Consumers (Next.js apps, other clients)
- * import these from `@igrp/framework-process-studio-client` to keep the
+ * import these from `@irn/framework-process-studio-client` to keep the
  * decoration/formatting consistent across UIs.
  */
 import type { AuditUser, ProcessDefinition } from '@irn/framework-process-studio-types';

@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: [
-    '@igrp/framework-process-studio-types',
-    '@igrp/framework-process-studio-bpmn-editor'
+    '@irn/framework-process-studio-client',
+    '@irn/framework-process-studio-types',
+    '@irn/framework-process-studio-bpmn-editor'
   ],
   webpack: (config) => {
     config.resolve.fallback = {
@@ -15,4 +16,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig 
+export default nextConfig
