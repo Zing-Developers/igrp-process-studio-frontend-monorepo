@@ -35,7 +35,7 @@
     "release": "pnpm build && pnpm publish --registry=https://nexus-1.zingaistudio.com/repository/npm-repo/ --tag latest"
   },
   "dependencies": {
-    "@irn/framework-process-studio-types": "workspace:*"
+    "@irn/framework-process-studio-types": "0.0.1-beta.20"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",
