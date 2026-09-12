@@ -173,14 +173,17 @@ export interface EnumItemString {
   label?: string;
 }
 
-export interface CreateRequest {
+export interface M2mKeyRequestDTO {
   clientName?: string;
   permissions?: string[];
   email?: string;
   expiresAt?: string;
 }
 
-export interface CreatedResponse {
+/** @deprecated Use M2mKeyRequestDTO. */
+export type CreateRequest = M2mKeyRequestDTO;
+
+export interface M2mKeyCreatedDTO {
   id?: string;
   clientName?: string;
   key?: string;
@@ -188,7 +191,10 @@ export interface CreatedResponse {
   userProfileCreatedBy?: UserProfileDTO;
 }
 
-export interface KeySummary {
+/** @deprecated Use M2mKeyCreatedDTO. */
+export type CreatedResponse = M2mKeyCreatedDTO;
+
+export interface M2mKeySummaryDTO {
   id?: string;
   clientName?: string;
   keyPrefix?: string;
@@ -206,6 +212,36 @@ export interface KeySummary {
   updatedAt?: string;
   updatedBy?: string;
   userProfileUpdatedBy?: UserProfileDTO;
+}
+
+/** @deprecated Use M2mKeySummaryDTO. */
+export type KeySummary = M2mKeySummaryDTO;
+
+export interface EmailAccessMappingRequestDTO {
+  email?: string;
+  permissions?: string[];
+  description?: string;
+  notes?: string;
+  expiresAt?: string;
+}
+
+export interface EmailAccessMappingDTO {
+  id?: string;
+  email?: string;
+  description?: string;
+  notes?: string;
+  permissions?: string[];
+  active?: boolean;
+  expiresAt?: string;
+  createdAt?: string;
+  createdBy?: string;
+  userProfileCreatedBy?: UserProfileDTO;
+  updatedAt?: string;
+  updatedBy?: string;
+  userProfileUpdatedBy?: UserProfileDTO;
+  revokedAt?: string;
+  revokedBy?: string;
+  userProfileRevokedBy?: UserProfileDTO;
 }
 
 export * from './process-studio.js';

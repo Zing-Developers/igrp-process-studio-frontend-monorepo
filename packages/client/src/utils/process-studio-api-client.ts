@@ -1,9 +1,11 @@
 import type {
   BpmDiagramDTO,
-  CreateRequest,
-  CreatedResponse,
+  EmailAccessMappingDTO,
+  EmailAccessMappingRequestDTO,
   EnumItemString,
-  KeySummary,
+  M2mKeyCreatedDTO,
+  M2mKeyRequestDTO,
+  M2mKeySummaryDTO,
   ProcessDefinitionFilter,
   ProcessDefinitionRequestDTO,
   ProcessDefinitionResponseDTO,
@@ -193,22 +195,49 @@ export class ProcessStudioApiClient extends BaseApiClient {
     return response.data;
   }
 
-  async listM2mKeys(): Promise<KeySummary[]> {
-    const response = await this.get<KeySummary[]>('/m2m-keys');
+  async listM2mKeys(): Promise<M2mKeySummaryDTO[]> {
+    const response = await this.get<M2mKeySummaryDTO[]>('/m2m-keys');
     return response.data;
   }
 
-  async createM2mKey(request: CreateRequest): Promise<CreatedResponse> {
-    const response = await this.post<CreatedResponse>('/m2m-keys', request);
+  async createM2mKey(request: M2mKeyRequestDTO): Promise<M2mKeyCreatedDTO> {
+    const response = await this.post<M2mKeyCreatedDTO>('/m2m-keys', request);
     return response.data;
   }
 
-  async rotateM2mKey(id: string): Promise<CreatedResponse> {
-    const response = await this.post<CreatedResponse>(`/m2m-keys/${encodePathSegment(id)}/rotate`);
+  async rotateM2mKey(id: string): Promise<M2mKeyCreatedDTO> {
+    const response = await this.post<M2mKeyCreatedDTO>(`/m2m-keys/${encodePathSegment(id)}/rotate`);
     return response.data;
   }
 
   async revokeM2mKey(id: string): Promise<void> {
     await this.delete(`/m2m-keys/${encodePathSegment(id)}`);
+  }
+
+  async listEmailAccessMappings(): Promise<EmailAccessMappingDTO[]> {
+    const response = await this.get<EmailAccessMappingDTO[]>('/email-access-mappings');
+    return response.data;
+  }
+
+  async createEmailAccessMapping(
+    request: EmailAccessMappingRequestDTO,
+  ): Promise<EmailAccessMappingDTO> {
+    const response = await this.post<EmailAccessMappingDTO>('/email-access-mappings', request);
+    return response.data;
+  }
+
+  async updateEmailAccessMapping(
+    id: string,
+    request: EmailAccessMappingRequestDTO,
+  ): Promise<EmailAccessMappingDTO> {
+    const response = await this.put<EmailAccessMappingDTO>(
+      `/email-access-mappings/${encodePathSegment(id)}`,
+      request,
+    );
+    return response.data;
+  }
+
+  async revokeEmailAccessMapping(id: string): Promise<void> {
+    await this.delete(`/email-access-mappings/${encodePathSegment(id)}`);
   }
 }

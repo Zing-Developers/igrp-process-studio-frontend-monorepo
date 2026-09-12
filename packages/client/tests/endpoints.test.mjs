@@ -176,6 +176,41 @@ const endpointCases = [
     response: () => new Response(null, { status: 200 }),
     invoke: (client) => client.revokeM2mKey('key-id'),
   },
+  {
+    name: 'list email access mappings',
+    method: 'GET',
+    path: '/email-access-mappings',
+    invoke: (client) => client.listEmailAccessMappings(),
+  },
+  {
+    name: 'create email access mapping',
+    method: 'POST',
+    path: '/email-access-mappings',
+    body: { email: 'user@example.test', permissions: ['PROJECT:read'] },
+    invoke: (client) =>
+      client.createEmailAccessMapping({
+        email: 'user@example.test',
+        permissions: ['PROJECT:read'],
+      }),
+  },
+  {
+    name: 'update email access mapping',
+    method: 'PUT',
+    path: '/email-access-mappings/mapping%2Fid',
+    body: { permissions: ['PROJECT:write'], notes: 'updated' },
+    invoke: (client) =>
+      client.updateEmailAccessMapping('mapping/id', {
+        permissions: ['PROJECT:write'],
+        notes: 'updated',
+      }),
+  },
+  {
+    name: 'revoke email access mapping',
+    method: 'DELETE',
+    path: '/email-access-mappings/mapping%2Fid',
+    response: () => new Response(null, { status: 204 }),
+    invoke: (client) => client.revokeEmailAccessMapping('mapping/id'),
+  },
 ];
 
 for (const endpointCase of endpointCases) {
@@ -207,6 +242,21 @@ test('does not append a question mark for an empty filter', async () => {
 
   await new ProcessStudioApiClient({ baseUrl: 'https://example.test' }).getProjects({});
   assert.equal(requestUrl, 'https://example.test/api/v1/projects');
+});
+
+test('omits empty query parameter values', async () => {
+  let requestUrl;
+  globalThis.fetch = async (url) => {
+    requestUrl = url;
+    return jsonResponse({ content: [] });
+  };
+
+  await new ProcessStudioApiClient({ baseUrl: 'https://example.test' }).getProjects({
+    appCode: '',
+    pageNumber: undefined,
+    pageSize: '20',
+  });
+  assert.equal(requestUrl, 'https://example.test/api/v1/projects?pageSize=20');
 });
 
 test('adds bearer authentication and accepts JSON and HAL+JSON', async () => {
@@ -247,6 +297,32 @@ test('returns undefined for a 204 response', async () => {
   globalThis.fetch = async () => new Response(null, { status: 204 });
   const client = new ProcessStudioApiClient({ baseUrl: 'https://example.test' });
   assert.equal(await client.revokeM2mKey('key-id'), undefined);
+});
+
+test('exposes email access mapping operations through the composed client', async () => {
+  const requests = [];
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url, options });
+    return options.method === 'DELETE'
+      ? new Response(null, { status: 204 })
+      : jsonResponse(options.method === 'GET' ? [] : { id: 'mapping-id' });
+  };
+
+  const client = createProcessStudioClient({ baseUrl: 'https://example.test' });
+  await client.emailAccessMappings.list();
+  await client.emailAccessMappings.create({ email: 'user@example.test' });
+  await client.emailAccessMappings.update('mapping/id', { notes: 'updated' });
+  await client.emailAccessMappings.revoke('mapping/id');
+
+  assert.deepEqual(
+    requests.map(({ url, options }) => [url, options.method]),
+    [
+      ['https://example.test/email-access-mappings', 'GET'],
+      ['https://example.test/email-access-mappings', 'POST'],
+      ['https://example.test/email-access-mappings/mapping%2Fid', 'PUT'],
+      ['https://example.test/email-access-mappings/mapping%2Fid', 'DELETE'],
+    ],
+  );
 });
 
 test('throws ApiClientError with the parsed response details', async () => {

@@ -229,6 +229,15 @@ client.processDefinitions.addVariables(processId, variables); // Salvar variáve
 client.processDefinitions.getVariables(processId); // Obter variáveis
 ```
 
+### Email Access Mappings API
+
+```typescript
+client.emailAccessMappings.list(); // Listar mapeamentos
+client.emailAccessMappings.create(mapping); // Criar mapeamento
+client.emailAccessMappings.update(id, mapping); // Atualizar mapeamento
+client.emailAccessMappings.revoke(id); // Revogar mapeamento
+```
+
 ### Hooks (implementar no seu projeto)
 
 ```typescript
@@ -280,3 +289,10 @@ packages/client/
 - `PUT /api/v1/projects/process-definitions/{processId}` - Atualizar definição
 - `PUT /api/v1/projects/process-definitions/{processKey}/diagram` - Salvar diagrama
 - `POST /api/v1/projects/process-definitions/{processKey}/deploy` - Deploy da definição
+
+### Email Access Mappings
+
+- `GET /email-access-mappings` - Listar mapeamentos
+- `POST /email-access-mappings` - Criar mapeamento
+- `PUT /email-access-mappings/{id}` - Atualizar mapeamento
+- `DELETE /email-access-mappings/{id}` - Revogar mapeamento

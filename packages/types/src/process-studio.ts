@@ -1,9 +1,11 @@
 import type {
   BpmDiagramDTO,
-  CreateRequest,
-  CreatedResponse,
+  EmailAccessMappingDTO,
+  EmailAccessMappingRequestDTO,
   EnumItemString,
-  KeySummary,
+  M2mKeyCreatedDTO,
+  M2mKeyRequestDTO,
+  M2mKeySummaryDTO,
   ProcessDefinitionRequestDTO,
   ProcessDefinitionResponseDTO,
   ProcessDefinitionFilter,
@@ -80,9 +82,15 @@ export interface ProcessStudioClient {
     getProcessDefinitionState: () => Promise<EnumItemString[]>;
   };
   m2mKeys: {
-    list: () => Promise<KeySummary[]>;
-    create: (request: CreateRequest) => Promise<CreatedResponse>;
-    rotate: (id: string) => Promise<CreatedResponse>;
+    list: () => Promise<M2mKeySummaryDTO[]>;
+    create: (request: M2mKeyRequestDTO) => Promise<M2mKeyCreatedDTO>;
+    rotate: (id: string) => Promise<M2mKeyCreatedDTO>;
+    revoke: (id: string) => Promise<void>;
+  };
+  emailAccessMappings: {
+    list: () => Promise<EmailAccessMappingDTO[]>;
+    create: (request: EmailAccessMappingRequestDTO) => Promise<EmailAccessMappingDTO>;
+    update: (id: string, request: EmailAccessMappingRequestDTO) => Promise<EmailAccessMappingDTO>;
     revoke: (id: string) => Promise<void>;
   };
 }

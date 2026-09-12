@@ -55,6 +55,11 @@ import type {
   ProcessDefinitionRequestDTO,
   ProcessDefinitionResponseDTO,
   ProcessDefinitionResponseLightDTO,
+  EmailAccessMappingRequestDTO,
+  EmailAccessMappingDTO,
+  M2mKeyRequestDTO,
+  M2mKeyCreatedDTO,
+  M2mKeySummaryDTO,
   PaginatedResponse,
 } from '@irn/framework-process-studio-types';
 ```

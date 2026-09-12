@@ -1,3 +1,4 @@
+import { createEmailAccessMappingFunctions } from '../functions/email-access-mapping.js';
 import { createProjectFunctions } from '../functions/project.js';
 import { createProcessDefinitionFunctions } from '../functions/process-definition.js';
 import { createM2mKeyFunctions } from '../functions/m2m-key.js';
@@ -24,6 +25,7 @@ export function createProcessStudioClient(config: ProcessStudioClientConfig): Pr
   const processDefinitionFunctions = createProcessDefinitionFunctions(apiClient);
   const parameterizationFunctions = createParameterizationFunctions(apiClient);
   const m2mKeyFunctions = createM2mKeyFunctions(apiClient);
+  const emailAccessMappingFunctions = createEmailAccessMappingFunctions(apiClient);
 
   return {
     projects: {
@@ -57,5 +59,6 @@ export function createProcessStudioClient(config: ProcessStudioClientConfig): Pr
     },
     parameterization: parameterizationFunctions,
     m2mKeys: m2mKeyFunctions,
+    emailAccessMappings: emailAccessMappingFunctions,
   };
 }

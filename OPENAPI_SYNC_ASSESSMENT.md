@@ -1,8 +1,9 @@
 # OpenAPI Sync Assessment — `packages/client`
 
-**Contract:** `packages/client/api-docs-studio-frontend.json` — OpenAPI 3.1.0, 23 operations,
-tags: `Project`, `ProcessDefinition`, `Parameterization`, `m-2m-key-controller`.
-**Date:** 2026-09-03 · **Implemented:** 2026-09-04 · **Branch:** `zing-release`
+**Contract:** `packages/client/api-docs.json` — OpenAPI 3.1.0, 27 operations,
+tags: `Project`, `ProcessDefinition`, `Parameterization`, `EmailAccessMapping`,
+`m-2m-key-controller`.
+**Refreshed:** 2026-09-12 · **Branch:** `zing-release`
 
 > Implementation update: the missing and incomplete models documented below have been
 > synchronized. Transport authentication, path encoding, HAL+JSON/empty-response handling,
@@ -16,15 +17,15 @@ tags: `Project`, `ProcessDefinition`, `Parameterization`, `m-2m-key-controller`.
   contract operation has a client method with the correct path, verb, path params, query
   params and request body. No stale or invented endpoints.
 - **Model/type layer** it depends on (`@irn/framework-process-studio-types`,
-  `packages/types/src`) — **fully synchronized.** All 18 schemas are represented, including
-  audit metadata and the nested `ProjectSummaryDTO` reference.
+  `packages/types/src`) — **fully synchronized.** All 20 schemas are represented, including
+  the new email-access DTOs and canonical `M2mKey*DTO` names.
 
-Both packages build cleanly, all 23 operations have mocked request tests, and both package
+Both packages build cleanly, all 27 operations have mocked request tests, and both package
 entry points import successfully through Node ESM.
 
 ---
 
-## Step 1 — Endpoint coverage matrix (23/23 mapped)
+## Step 1 — Endpoint coverage matrix (27/27 mapped)
 
 | # | Method + path | operationId | Client method | OK |
 |---|---|---|---|---|
@@ -51,6 +52,10 @@ entry points import successfully through Node ESM.
 | 21 | POST `/m2m-keys` | create | `createM2mKey(body)` | ✅ |
 | 22 | POST `/m2m-keys/{id}/rotate` | rotate | `rotateM2mKey(id)` | ✅ |
 | 23 | DELETE `/m2m-keys/{id}` | revoke | `revokeM2mKey(id)` | ✅ |
+| 24 | GET `/email-access-mappings` | list_1 | `listEmailAccessMappings()` | ✅ |
+| 25 | POST `/email-access-mappings` | create_1 | `createEmailAccessMapping(body)` | ✅ |
+| 26 | PUT `/email-access-mappings/{id}` | update | `updateEmailAccessMapping(id, body)` | ✅ |
+| 27 | DELETE `/email-access-mappings/{id}` | revoke | `revokeEmailAccessMapping(id)` | ✅ |
 
 - **Missing:** none.
 - **Stale (client → contract):** none. `createOrUpdateVariable` on `ProcessStudioApiClient`
@@ -60,8 +65,8 @@ entry points import successfully through Node ESM.
   `getProjects`).
 
 **Response typing** — all correct: `string`-schema PATCH/enable/disable/delete/restore →
-`Promise<string>`; `revoke` (204, no content) → `Promise<void>`; `hal+json` array/object
-bodies parse because `parseResponse` matches any `*/*json` content-type.
+`Promise<string>`; bodyless M2M/email revocations → `Promise<void>`; JSON and HAL+JSON
+array/object bodies parse because `parseResponse` matches any JSON content type.
 
 ---
 
@@ -96,9 +101,19 @@ prevent recurrence.
 
 `UserProfileDTO`, `ProjectRequestDTO`, `BpmDiagramDTO` (incl. `required: [content]`),
 `ProcessDefinitionRequestDTO` (incl. 8-value `status` enum → `ProcessDefinitionStatus`),
-`ProcessVariableRequestDTO`, `CreateRequest`, `CreatedResponse`, `EnumItemString`,
+`ProcessVariableRequestDTO`, `M2mKeyRequestDTO`, `M2mKeyCreatedDTO`, `EnumItemString`,
 `WrapperListaProjectDTO` / `WrapperListaProcessDefinitionDTO`
 (`PaginatedResponse<T>`, correct item types — full list uses `...LightDTO`).
+
+### 2d. Live-contract additions and renames (2026-09-12)
+
+| Contract schema | Type action |
+|---|---|
+| `EmailAccessMappingRequestDTO` | Added with email, permissions, description, notes, and expiry fields. |
+| `EmailAccessMappingDTO` | Added with lifecycle and created/updated/revoked audit fields. |
+| `M2mKeyRequestDTO` | Added as the canonical name; `CreateRequest` remains a deprecated alias. |
+| `M2mKeyCreatedDTO` | Added as the canonical name; `CreatedResponse` remains a deprecated alias. |
+| `M2mKeySummaryDTO` | Added as the canonical name; `KeySummary` remains a deprecated alias. |
 
 ---
 
@@ -118,8 +133,8 @@ defaults `"0"`/`"20"`) and all optional, matching `required: false`.
 ## Minor / non-blocking observations (pre-existing, not caused by contract drift)
 
 1. **Resolved: path params are URL-encoded** with `encodeURIComponent`.
-2. **`buildQueryString` drops `undefined`/`null` but not `""`** — an empty-string filter
-   value is still sent (`?processKey=`). Guideline suggests dropping `""` too.
+2. **Resolved: `buildQueryString` drops `undefined`, `null`, and `""`**, preventing empty
+   filters such as `?processKey=`.
 3. **Resolved: `Accept` supports JSON and HAL+JSON**, and empty response bodies are handled.
 4. **`servers[0].url` carries base path `/process-studio`** — the client does not hardcode
    it; the consumer must include it in `config.baseUrl`. No double-concatenation risk.
@@ -138,3 +153,35 @@ defaults `"0"`/`"20"`) and all optional, matching `required: false`.
 4. Added `updatedAt?`, `updatedBy?`, `userProfileUpdatedBy?` to `KeySummary`.
 5. Rebuilt `packages/types` → `packages/client` and type-checked `apps/studio-app` against
    `workspace:*` dependencies. Version bumping remains a release step.
+6. Added all four email-access-mapping operations to the direct and composed clients, with
+   verb, body, URL encoding, 204, and composed-surface tests.
+7. Added `api-docs.json` to the client Prettier ignore list so contract refreshes stay
+   byte-for-byte idempotent after builds.
+
+## Intentional deviations and compatibility
+
+- `GET /email-access-mappings` is typed as `EmailAccessMappingDTO[]`. Its description and
+  top-level `type: array` establish a collection even though the generated schema places
+  `$ref` directly beside `type` instead of under `items`.
+- The contract provides no `required` arrays except for `BpmDiagramDTO.content`; all other
+  model properties remain optional rather than inventing requiredness.
+- No public type or method was removed. Legacy M2M names remain exported as deprecated
+  aliases, and existing composite helpers remain available.
+- The tracked legacy snapshot `api-docs-studio-frontend.json` remains unchanged; the
+  synchronizer's authoritative refresh target is now `api-docs.json`.
+
+## Verification (2026-09-12)
+
+| Check | Result |
+|---|---|
+| `pnpm build:types` | ✅ Passed |
+| `pnpm build:client` | ✅ Passed against freshly built types |
+| `pnpm --filter @igrp/studio-demo exec tsc --noEmit -p tsconfig.json` | ✅ Passed |
+| Client endpoint suite | ✅ 34/34 tests passed |
+| Studio consumer Jest suite | ✅ 2/2 tests passed |
+| Contract refetch after client build | ✅ Already current (idempotent) |
+| Root `pnpm test` | ⚠️ Pre-existing placeholder exits 1 with `Error: no test specified` |
+
+The skill's nominal `@igrp/platform-process-management-client-ui` consumer filter matches no
+workspace package in this repository; `@igrp/studio-demo` is the actual consumer and was
+checked instead.
