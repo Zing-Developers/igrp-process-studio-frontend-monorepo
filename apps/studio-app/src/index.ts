@@ -2,9 +2,9 @@ import type {
   Project,
   PaginatedResponse,
   ProcessDefinition,
-} from "@igrp/framework-process-studio-types";
+} from "@irn/framework-process-studio-types";
 
-import { IGRPBpmnModeler, IGRPZoomControls, IGRPBpmnControls } from "@igrp/framework-process-studio-bpmn-editor";
+import { IGRPBpmnModeler, IGRPZoomControls, IGRPBpmnControls } from "@irn/framework-process-studio-bpmn-editor";
 
 // Testing the new types
 const createProcessDefinition: ProcessDefinition = {
@@ -13,7 +13,7 @@ const createProcessDefinition: ProcessDefinition = {
   projectId: "proj-001",
   status: "ACTIVE",
   processDefinitionId: "proc-001",
-  version: "1.0.0",
+  version: 1,
   statusDesc: "Process is active and ready for execution",
 };
 
@@ -23,7 +23,7 @@ const createProcessDefinition2: ProcessDefinition = {
   projectId: "proj-001",
   status: "DRAFT",
   processDefinitionId: "proc-002",
-  version: "2.1.0",
+  version: 2,
   statusDesc: "Process is in draft mode",
 };
 

@@ -111,3 +111,4 @@ tmp/
 # create template zip
 create-template/nexus-auth.txt
 igrp-next-template.zip
+packages/client/api-docs-studio-frontend.json

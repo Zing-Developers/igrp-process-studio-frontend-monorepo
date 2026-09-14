@@ -1,2 +1,2 @@
 // Client configuration
-export { createProcessStudioClient } from './client';
+export { createProcessStudioClient } from './client.js';

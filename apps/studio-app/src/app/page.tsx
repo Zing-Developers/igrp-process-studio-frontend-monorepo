@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { IGRPBpmnModeler } from "@igrp/framework-process-studio-bpmn-editor";
+import { IGRPBpmnModeler } from "@irn/framework-process-studio-bpmn-editor";
 
 const newDiagram = (
   processKey: string,

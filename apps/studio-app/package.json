@@ -11,7 +11,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@igrp/framework-process-studio-bpmn-editor": "workspace:*",
+    "@irn/framework-process-studio-bpmn-editor": "workspace:*",
     "@irn/framework-process-studio-client": "workspace:*",
     "@irn/framework-process-studio-types": "workspace:*",
     "@tanstack/react-query": "^5.0.0",
