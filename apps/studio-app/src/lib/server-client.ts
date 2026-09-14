@@ -1,4 +1,4 @@
-import { createProcessStudioClient } from '@igrp/framework-process-studio-client';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
 
 // Environment configuration for server-side
 const getServerConfig = () => {

@@ -2,7 +2,7 @@
  * Presentation-layer helpers for ProcessDefinition rows.
  *
  * Pure functions — no React, no hooks. Consumers (Next.js apps, other clients)
- * import these from `@igrp/framework-process-studio-client` to keep the
+ * import these from `@irn/framework-process-studio-client` to keep the
  * decoration/formatting consistent across UIs.
  */
 import type { AuditUser, ProcessDefinition } from '@irn/framework-process-studio-types';
@@ -77,10 +77,10 @@ export const decorateProcessDefinitionRow = (pd: ProcessDefinition): ProcessDefi
     ...pd,
     version: pd?.version != null ? String(pd.version) : 'N/D',
     deploymentDate: formatDeploymentDate(pd?.deploymentDate),
-    createdByNameTbl: pd?.createdBy?.fullName ?? '',
-    createdDateTbl: pd?.createdDate ?? '',
-    lastModifiedByNameTbl: pd?.lastModifiedBy?.fullName ?? '',
-    lastModifiedDateTbl: pd?.lastModifiedDate ?? '',
+    createdByNameTbl: pd?.userProfileCreatedBy?.fullName ?? '',
+    createdDateTbl: '',
+    lastModifiedByNameTbl: pd?.userProfileLastModifiedBy?.fullName ?? '',
+    lastModifiedDateTbl: '',
   };
 };
 

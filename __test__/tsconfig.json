@@ -1,0 +1,25 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "../",
+    "composite": true,
+    "outDir": "./dist",
+    "paths": {
+      "@irn/framework-process-studio-client": ["packages/client/src/index.ts"],
+      "@irn/framework-process-studio-client/*": ["packages/client/src/*"],
+      "@irn/framework-process-studio-types": ["packages/types/src/index.ts"],
+      "@irn/framework-process-studio-types/*": ["packages/types/src/*"]
+    }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.d.ts", "**/*.js"],
+  "references": [
+    { "path": "../packages/types" },
+    { "path": "../packages/client" }
+  ]
+}

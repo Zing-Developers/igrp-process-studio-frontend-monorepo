@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Project, PaginatedResponse } from '@igrp/framework-process-studio-types';
+import type { Project, PaginatedResponse } from '@irn/framework-process-studio-types';
 
 interface UseProjectsReturn {
   projects: PaginatedResponse<Project> | null;

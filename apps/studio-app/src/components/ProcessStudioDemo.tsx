@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { createProcessStudioClient } from '@igrp/framework-process-studio-core';
-import type { Project, ProcessDefinition } from '@igrp/framework-process-studio-types';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
+import type { Project, ProcessDefinition } from '@irn/framework-process-studio-types';
 
 const client = createProcessStudioClient({
   baseUrl: 'http://localhost:8083',
@@ -133,8 +133,6 @@ export const ProcessStudioDemo: React.FC = () => {
               name: 'Novo Projeto Teste',
               code: 'TEST' + Date.now(),
               description: 'Projeto criado via teste',
-              projectId: '',
-              processDefinitions: [],
             });
           }}
         >
@@ -151,9 +149,6 @@ export const ProcessStudioDemo: React.FC = () => {
                 description: 'Processo criado via teste',
                 projectId: selectedProject,
                 status: 'DRAFT',
-                processDefinitionId: '',
-                version: '1.0',
-                statusDesc: 'Rascunho',
               });
             }
           }}
@@ -164,4 +159,4 @@ export const ProcessStudioDemo: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};
