@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* BPMN Editor specific styles */
+.bpmn-container {
+  height: 600px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bpmn-toolbar {
+  padding: 12px;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bpmn-canvas {
+  height: calc(100% - 60px);
+  position: relative;
+}
+
+/* Properties panel */
+.properties-panel {
+  width: 300px;
+  border-left: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  overflow-y: auto;
+}
+
+/* Test section styles */
+.test-section {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.test-section h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.success {
+  color: #059669;
+  font-weight: 500;
+}
+
+.info {
+  color: #0ea5e9;
+}
+
+.warning {
+  color: #d97706;
+}
+
+.error {
+  color: #dc2626;
+} 

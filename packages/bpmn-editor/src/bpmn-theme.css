@@ -1,0 +1,78 @@
+/**
+ * Dark mode for the BPMN editor (bpmn-js canvas chrome + properties panel).
+ *
+ * Triggered by an ancestor `.dark` class (next-themes). Both diagram-js and
+ * @bpmn-io/properties-panel derive every semantic color from a shared base
+ * palette (--color-grey-225-10-*, --color-white, --color-black), so inverting
+ * that palette under `.dark` re-themes the whole surface coherently.
+ *
+ * Element shapes (stroke/fill/label) are themed via the BpmnRenderer config in
+ * BpmnModeler.tsx, not here, so per-element custom BPMN colors are preserved.
+ */
+
+.dark .djs-parent,
+.dark .bio-properties-panel {
+  /* base palette — lightness inverted for a dark surface, hue/sat kept */
+  --color-white: hsl(225, 10%, 13%);
+  --color-black: hsl(225, 10%, 92%);
+
+  --color-grey-225-10-97: hsl(225, 10%, 14%);
+  --color-grey-225-10-95: hsl(225, 10%, 16%);
+  --color-grey-225-10-90: hsl(225, 10%, 20%);
+  --color-grey-225-10-85: hsl(225, 10%, 23%);
+  --color-grey-225-10-80: hsl(225, 10%, 26%);
+  --color-grey-225-10-75: hsl(225, 10%, 30%);
+  --color-grey-225-10-55: hsl(225, 10%, 48%);
+  --color-grey-225-10-35: hsl(225, 10%, 70%);
+  --color-grey-225-10-15: hsl(225, 10%, 88%);
+}
+
+/* ---- canvas chrome (palette, context pad, popups, search, plane) ---- */
+.dark .djs-container {
+  background-color: hsl(240, 6%, 11%);
+}
+
+.dark .djs-parent {
+  --canvas-fill-color: hsl(240, 6%, 11%);
+  --palette-entry-selected-color: hsl(205, 100%, 65%);
+  --element-selected-outline-stroke-color: hsl(205, 100%, 60%);
+  --element-hover-outline-fill-color: hsl(205, 100%, 60%);
+}
+
+/* dotted grid drawn by diagram-js (if enabled) */
+.dark .djs-grid-line {
+  stroke: hsl(240, 6%, 22%);
+}
+
+/* ---- properties panel fine-tuning ---- */
+.dark .bio-properties-panel {
+  --group-background-color: hsl(240, 6%, 13%);
+  --header-background-color: hsl(240, 6%, 16%);
+  --input-background-color: hsl(240, 6%, 16%);
+  --input-focus-background-color: hsl(205, 60%, 20%);
+}
+
+/* FEEL / CodeMirror editor inside the panel */
+.dark .bio-properties-panel .cm-editor {
+  background-color: hsl(240, 6%, 16%);
+  color: hsl(225, 10%, 90%);
+}
+
+.dark .bio-properties-panel .cm-editor .cm-content {
+  caret-color: hsl(225, 10%, 90%);
+}
+
+.dark .bio-properties-panel .cm-editor .cm-cursor {
+  border-left-color: hsl(225, 10%, 90%);
+}
+
+.dark .bio-properties-panel .cm-editor .cm-gutters {
+  background-color: hsl(240, 6%, 14%);
+  color: hsl(225, 10%, 55%);
+  border-right-color: hsl(240, 6%, 24%);
+}
+
+.dark .bio-properties-panel .cm-editor .cm-activeLine,
+.dark .bio-properties-panel .cm-editor .cm-activeLineGutter {
+  background-color: hsl(240, 6%, 19%);
+}
