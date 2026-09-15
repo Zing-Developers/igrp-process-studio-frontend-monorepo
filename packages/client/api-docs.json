@@ -409,17 +409,70 @@
         "tags": [
           "EmailAccessMapping"
         ],
-        "summary": "Listar mapeamentos",
-        "description": "Todos os mapeamentos, revogados incluídos, com o trio de auditoria (criado, alterado, revogado por). Estado: active=false → revogado; expiresAt no passado → expirado. Exige STUDIO_EMAIL_ACCESS_MAPPINGS:visualizar.",
+        "summary": "Listar mapeamentos (paginado)",
+        "description": "Uma página, mais recentes primeiro, revogados incluídos, com o trio de auditoria. Filtros: email (contém, sem distinção de maiúsculas) e status (active = activo e não expirado, revoked, expired). Exige STUDIO_EMAIL_ACCESS_MAPPINGS:visualizar.",
         "operationId": "list_1",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Contém, sem distinção de maiúsculas",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "active | revoked | expired",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Página, a começar em 0",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Tamanho da página, default 20, máximo 100",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Lista de mapeamentos",
+            "description": "Página de mapeamentos",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "$ref": "#/components/schemas/EmailAccessMappingDTO"
+                  "type": "object",
+                  "$ref": "#/components/schemas/WrapperListaEmailAccessMappingDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "status fora de active|revoked|expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "error": "status must be one of active, revoked, expired"
                 }
               }
             }
@@ -1706,6 +1759,39 @@
           },
           "userProfileUpdatedBy": {
             "$ref": "#/components/schemas/UserProfileDTO"
+          }
+        }
+      },
+      "WrapperListaEmailAccessMappingDTO": {
+        "type": "object",
+        "properties": {
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmailAccessMappingDTO"
+            }
           }
         }
       },

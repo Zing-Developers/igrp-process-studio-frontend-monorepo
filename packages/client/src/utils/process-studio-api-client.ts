@@ -1,6 +1,7 @@
 import type {
   BpmDiagramDTO,
   EmailAccessMappingDTO,
+  EmailAccessMappingFilter,
   EmailAccessMappingRequestDTO,
   EnumItemString,
   M2mKeyCreatedDTO,
@@ -15,6 +16,7 @@ import type {
   ProjectProcessFilter,
   ProjectRequestDTO,
   ProjectResponseDTO,
+  WrapperListaEmailAccessMappingDTO,
   WrapperListaProcessDefinitionDTO,
   WrapperListaProjectDTO,
 } from '@irn/framework-process-studio-types';
@@ -214,8 +216,13 @@ export class ProcessStudioApiClient extends BaseApiClient {
     await this.delete(`/m2m-keys/${encodePathSegment(id)}`);
   }
 
-  async listEmailAccessMappings(): Promise<EmailAccessMappingDTO[]> {
-    const response = await this.get<EmailAccessMappingDTO[]>('/email-access-mappings');
+  async listEmailAccessMappings(
+    filter?: EmailAccessMappingFilter,
+  ): Promise<WrapperListaEmailAccessMappingDTO> {
+    const response = await this.get<WrapperListaEmailAccessMappingDTO>(
+      '/email-access-mappings',
+      filter,
+    );
     return response.data;
   }
 

@@ -35,6 +35,9 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Local npm registry configuration and credentials
+.npmrc
+
 # vercel
 .vercel
 

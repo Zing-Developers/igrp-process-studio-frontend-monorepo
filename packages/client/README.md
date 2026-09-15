@@ -292,7 +292,7 @@ packages/client/
 
 ### Email Access Mappings
 
-- `GET /email-access-mappings` - Listar mapeamentos
+- `GET /email-access-mappings` - Listar mapeamentos paginados (`email`, `status`, `pageNumber`, `pageSize`)
 - `POST /email-access-mappings` - Criar mapeamento
 - `PUT /email-access-mappings/{id}` - Atualizar mapeamento
 - `DELETE /email-access-mappings/{id}` - Revogar mapeamento
