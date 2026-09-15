@@ -1,6 +1,7 @@
 import type {
   BpmDiagramDTO,
   EmailAccessMappingDTO,
+  EmailAccessMappingFilter,
   EmailAccessMappingRequestDTO,
   EnumItemString,
   M2mKeyCreatedDTO,
@@ -15,6 +16,7 @@ import type {
   ProjectProcessFilter,
   ProjectRequestDTO,
   ProjectResponseDTO,
+  WrapperListaEmailAccessMappingDTO,
   WrapperListaProcessDefinitionDTO,
   WrapperListaProjectDTO,
 } from './index.js';
@@ -88,7 +90,7 @@ export interface ProcessStudioClient {
     revoke: (id: string) => Promise<void>;
   };
   emailAccessMappings: {
-    list: () => Promise<EmailAccessMappingDTO[]>;
+    list: (filter?: EmailAccessMappingFilter) => Promise<WrapperListaEmailAccessMappingDTO>;
     create: (request: EmailAccessMappingRequestDTO) => Promise<EmailAccessMappingDTO>;
     update: (id: string, request: EmailAccessMappingRequestDTO) => Promise<EmailAccessMappingDTO>;
     revoke: (id: string) => Promise<void>;

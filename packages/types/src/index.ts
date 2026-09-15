@@ -244,4 +244,15 @@ export interface EmailAccessMappingDTO {
   userProfileRevokedBy?: UserProfileDTO;
 }
 
+export type EmailAccessMappingStatus = 'active' | 'revoked' | 'expired';
+
+export interface EmailAccessMappingFilter {
+  email?: string;
+  status?: EmailAccessMappingStatus;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export type WrapperListaEmailAccessMappingDTO = PaginatedResponse<EmailAccessMappingDTO>;
+
 export * from './process-studio.js';
