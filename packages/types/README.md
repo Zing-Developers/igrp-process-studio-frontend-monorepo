@@ -57,6 +57,9 @@ import type {
   ProcessDefinitionResponseLightDTO,
   EmailAccessMappingRequestDTO,
   EmailAccessMappingDTO,
+  EmailAccessMappingFilter,
+  EmailAccessMappingStatus,
+  WrapperListaEmailAccessMappingDTO,
   M2mKeyRequestDTO,
   M2mKeyCreatedDTO,
   M2mKeySummaryDTO,
@@ -100,6 +103,12 @@ interface ProcessStudioClient {
       diagram: BpmDiagramDTO,
     ) => Promise<ProcessDefinitionResponseDTO>;
     deploy: (processKey: string, diagram: BpmDiagramDTO) => Promise<ProcessDefinitionResponseDTO>;
+  };
+  emailAccessMappings: {
+    list: (filter?: EmailAccessMappingFilter) => Promise<WrapperListaEmailAccessMappingDTO>;
+    create: (request: EmailAccessMappingRequestDTO) => Promise<EmailAccessMappingDTO>;
+    update: (id: string, request: EmailAccessMappingRequestDTO) => Promise<EmailAccessMappingDTO>;
+    revoke: (id: string) => Promise<void>;
   };
 }
 ```

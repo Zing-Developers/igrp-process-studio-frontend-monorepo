@@ -179,8 +179,14 @@ const endpointCases = [
   {
     name: 'list email access mappings',
     method: 'GET',
-    path: '/email-access-mappings',
-    invoke: (client) => client.listEmailAccessMappings(),
+    path: '/email-access-mappings?email=user%40example.test&status=active&pageNumber=0&pageSize=20',
+    invoke: (client) =>
+      client.listEmailAccessMappings({
+        email: 'user@example.test',
+        status: 'active',
+        pageNumber: 0,
+        pageSize: 20,
+      }),
   },
   {
     name: 'create email access mapping',
@@ -305,11 +311,11 @@ test('exposes email access mapping operations through the composed client', asyn
     requests.push({ url, options });
     return options.method === 'DELETE'
       ? new Response(null, { status: 204 })
-      : jsonResponse(options.method === 'GET' ? [] : { id: 'mapping-id' });
+      : jsonResponse(options.method === 'GET' ? { content: [] } : { id: 'mapping-id' });
   };
 
   const client = createProcessStudioClient({ baseUrl: 'https://example.test' });
-  await client.emailAccessMappings.list();
+  await client.emailAccessMappings.list({ status: 'expired', pageNumber: 2 });
   await client.emailAccessMappings.create({ email: 'user@example.test' });
   await client.emailAccessMappings.update('mapping/id', { notes: 'updated' });
   await client.emailAccessMappings.revoke('mapping/id');
@@ -317,7 +323,7 @@ test('exposes email access mapping operations through the composed client', asyn
   assert.deepEqual(
     requests.map(({ url, options }) => [url, options.method]),
     [
-      ['https://example.test/email-access-mappings', 'GET'],
+      ['https://example.test/email-access-mappings?status=expired&pageNumber=2', 'GET'],
       ['https://example.test/email-access-mappings', 'POST'],
       ['https://example.test/email-access-mappings/mapping%2Fid', 'PUT'],
       ['https://example.test/email-access-mappings/mapping%2Fid', 'DELETE'],
