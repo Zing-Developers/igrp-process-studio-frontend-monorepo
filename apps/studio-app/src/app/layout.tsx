@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import "@irn/framework-process-studio-bpmn-editor/dist/src/styles.css";
+import "@irn/framework-process-studio-bpmn-editor/styles.css";
 import "@igrp/igrp-framework-react-design-system/dist/styles.css";
 
 export default function RootLayout({
