@@ -1,6 +1,6 @@
 {
   "name": "@irn/framework-process-studio-bpmn-editor",
-  "version": "0.1.0-beta.17",
+  "version": "0.1.0-beta.18",
   "description": "IGRP Framework for Next.js | Design System components",
   "keywords": [
     "igrp",
@@ -37,7 +37,7 @@
     "@bpmn-io/cm-theme": "^0.2.0",
     "@bpmn-io/feel-editor": "^2.6.0",
     "@bpmn-io/properties-panel": "^3.30.2",
-    "@igrp/igrp-framework-react-design-system": "latest",
+    "@igrp/igrp-framework-react-design-system": "0.2.0-beta.8",
     "bpmn-js": "^18.6.2",
     "bpmn-js-properties-panel": "^5.38.1",
     "bpmn-js-token-simulation": "^0.38.1",
