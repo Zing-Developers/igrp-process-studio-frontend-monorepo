@@ -7,7 +7,7 @@ Test files must end in `.test.ts`; `vitest.config.ts` deliberately limits the
 root suite to this directory so it does not collect the demo app's Jest tests or
 the client's compiled-package `node:test` suite.
 
-Run the root tests with:
+Run the  root tests with:
 
 ```sh
 pnpm test
